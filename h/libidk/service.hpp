@@ -1,7 +1,7 @@
 #pragma once
 
 #include "idkcfg/message.hpp"
-#include "libidk/inplace_queue.hpp"
+#include "idk/core/inplace_queue.hpp"
 #include <memory>
 #include <vector>
 

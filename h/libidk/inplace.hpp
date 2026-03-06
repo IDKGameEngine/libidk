@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "libidk/log.hpp"
+#include "idk/core/log.hpp"
 
 namespace idk
 {
