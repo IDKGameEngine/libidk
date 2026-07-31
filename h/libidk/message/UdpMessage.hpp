@@ -6,7 +6,6 @@ struct NET_DatagramSocket;
 struct NET_Datagram;
 struct NET_Address;
 
-
 namespace idk
 {
     class UdpRxTxer: private idk::NonMobile
@@ -24,9 +23,7 @@ namespace idk
         NET_Datagram *beginRecvMsg(void *buf, size_t bufsz);
         void endRecvMsg(NET_Datagram*);
         void replyMsg(NET_Datagram*, const void *data, size_t size);
-        bool sendMsg(const void *data, size_t size);
+        virtual bool sendMsg(const void *data, size_t size) final;
 
     };
-
 }
-
