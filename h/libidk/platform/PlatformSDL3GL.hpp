@@ -2,10 +2,7 @@
 
 #include "libidk/platform/WindowSDL3GL.hpp"
 #include "libidk/raii.hpp"
-#include "idk_engine/Engine.hpp"
-#include "libidk/metric.hpp"
-
-struct SDL_Window;
+#include "libidk/Engine.hpp"
 
 namespace idk::platform
 {
@@ -14,8 +11,8 @@ namespace idk::platform
     public:
         PlatformSDL3GL(bool headless = false);
         ~PlatformSDL3GL();
-        void update(idk::IEngine*);
-        void shutdown(idk::IEngine*);
+        virtual void update(idk::IEngine*) final;
+        virtual void shutdown(idk::IEngine*) final;
 
     private:
         RaiiFunc<void()>            mRaii;

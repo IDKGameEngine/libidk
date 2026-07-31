@@ -12,7 +12,7 @@ namespace idk::platform
 
         virtual int   getHeight() const = 0;
         virtual void *getNativeHandle() const = 0;
-        virtual void *getGpuContext() const = 0;
+        virtual void *getGpuContext() const { return nullptr; };
         virtual void  pollEvents() = 0;
         virtual void  makeCurrent() = 0;
         virtual void  swapWindow() = 0;

@@ -61,6 +61,7 @@ idk::platform::PlatformSDL3GL::PlatformSDL3GL(bool headless)
 :   mRaii(PlatformSDL3GLRaiiFunc),
     mWin("Window Title", 1280, 720)
 {
+    (void)headless;
     // SDL_WindowFlags flags = SDL_WINDOW_OPENGL;
     // if (headless) { flags |= SDL_WINDOW_HIDDEN; }
     mWin.makeCurrent();

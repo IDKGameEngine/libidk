@@ -54,6 +54,13 @@ void idk::platform::WindowSDL3::swapWindow()
 }
 
 
+void idk::platform::WindowSDL3::showWindow(bool show)
+{
+    if (show) { SDL_HideWindow(mWin); }
+    else      { SDL_ShowWindow(mWin); }
+}
+
+
 void idk::platform::WindowSDL3::setWindowResolution(int w, int h)
 {
     SDL_SetWindowSize(mWin, w, h);
@@ -69,9 +76,3 @@ void idk::platform::WindowSDL3::setRenderResolution(int w, int h)
     mBPP = SDL_GetPixelFormatDetails(mBackSurf->format)->bytes_per_pixel;
 }
 
-
-void idk::platform::WindowSDL3::showWindow(bool show)
-{
-    if (show) { SDL_HideWindow(mWin); }
-    else      { SDL_ShowWindow(mWin); }
-}

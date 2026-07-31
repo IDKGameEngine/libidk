@@ -19,6 +19,7 @@ namespace idk::platform
         virtual void  pollEvents() final;
         virtual void  makeCurrent() final;
         virtual void  swapWindow() final;
+        virtual void  showWindow(bool show) final;
         virtual void  setWindowResolution(int w, int h) final;
         virtual void  setRenderResolution(int w, int h) final;
 

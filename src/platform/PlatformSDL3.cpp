@@ -24,7 +24,7 @@ idk::platform::PlatformSDL3::PlatformSDL3(bool headless)
 :   mRaii(PlatformSDL3RaiiFunc),
     mWin("Window Title", 1280, 720)
 {
-
+    (void)headless;
 }
 
 

@@ -67,6 +67,13 @@ void idk::platform::WindowSDL3GL::swapWindow()
 }
 
 
+void idk::platform::WindowSDL3GL::showWindow(bool show)
+{
+    if (show) { SDL_HideWindow(mWin); }
+    else      { SDL_ShowWindow(mWin); }
+}
+
+
 void idk::platform::WindowSDL3GL::setWindowResolution(int w, int h)
 {
     SDL_SetWindowSize(mWin, w, h);
