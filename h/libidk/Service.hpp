@@ -10,7 +10,7 @@ namespace idk
 
 namespace idk::core
 {
-    class Service: public idk::NonMobile
+    class Service: public idk::Immobile
     {
     private:
         static constexpr size_t MAX_NAME_LENGTH = 64;

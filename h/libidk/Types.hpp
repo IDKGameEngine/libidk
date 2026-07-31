@@ -11,7 +11,7 @@ namespace idk
 
     class NonCopyable;
     class NonMovable;
-    class NonMobile;
+    class Immobile;
 
     template <typename T, size_t N>
     using ArrayRefType = T(&)[N];
@@ -76,7 +76,7 @@ public:
     NonMovable &operator=(NonMovable&&) = delete;
 };
 
-class idk::NonMobile: private idk::NonCopyable, private idk::NonMovable { };
+class idk::Immobile: private idk::NonCopyable, private idk::NonMovable { };
 
 
 

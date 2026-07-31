@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libidk/types.hpp"
+#include "libidk/Types.hpp"
 
 struct NET_DatagramSocket;
 struct NET_Datagram;
@@ -8,7 +8,7 @@ struct NET_Address;
 
 namespace idk
 {
-    class UdpRxTxer: private idk::NonMobile
+    class UdpRxTxer: private idk::Immobile
     {
     private:
         NET_DatagramSocket *mSocket;

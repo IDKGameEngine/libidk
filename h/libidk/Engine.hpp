@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libidk/types.hpp"
+#include "libidk/Types.hpp"
 #include "libidk/cfgparser.hpp"
 #include "libidk/Timer.hpp"
 #include "libidk/raii.hpp"
@@ -20,7 +20,7 @@ namespace idk
         EngineConfig() {  }
     };
 
-    class IEngine: public idk::NonMobile
+    class IEngine: public idk::Immobile
     {
     protected:
         virtual core::Service *_getService(idk::IdType id) = 0;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libidk/types.hpp"
+#include "libidk/Types.hpp"
 #include "libidk/assert.hpp"
 #include "libidk/stdstr.hpp"
 #include "libidk/stdmem.hpp"

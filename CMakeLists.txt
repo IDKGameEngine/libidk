@@ -29,4 +29,8 @@ target_sources(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/transform.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpMessage.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/detail/AllocatorImpl.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/PlatformSDL3.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/PlatformSDL3GL.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/WindowSDL3.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/WindowSDL3GL.cpp"
 )

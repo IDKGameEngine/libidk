@@ -2,7 +2,7 @@
 
 #include "libidk/assert.hpp"
 #include "libidk/log.hpp"
-#include "libidk/types.hpp"
+#include "libidk/Types.hpp"
 #include <cstdint>
 
 

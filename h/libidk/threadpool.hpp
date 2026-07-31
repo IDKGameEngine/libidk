@@ -8,7 +8,7 @@
 #include <thread>
 #include <vector>
 
-#include "libidk/types.hpp"
+#include "libidk/Types.hpp"
 #include "libidk/metric.hpp"
 #include "libidk/queue.hpp"
 
