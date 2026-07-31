@@ -1,7 +1,7 @@
 #pragma once
 
-#include "idk_core/cfgparser.hpp"
-#include "idk_core/raii.hpp"
+#include "libidk/cfgparser.hpp"
+#include "libidk/raii.hpp"
 
 namespace idk
 {

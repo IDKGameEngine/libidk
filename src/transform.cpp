@@ -1,4 +1,4 @@
-#include "idk_core/transform.hpp"
+#include "libidk/transform.hpp"
 
 
 idk::Transform::Transform(const glm::vec3 &pos, const glm::quat &rot, const glm::vec3 &scale)

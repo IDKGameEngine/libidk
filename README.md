@@ -1,1 +1,1 @@
-# idk_core
+# libidk

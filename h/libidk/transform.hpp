@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idk_core/basis.hpp"
+#include "libidk/basis.hpp"
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

@@ -1,15 +1,17 @@
 #pragma once
 
-#include "idk_core/metric.hpp"
-#include "idk_core/Allocator.hpp"
+#include "libidk/metric.hpp"
+#include "libidk/Allocator.hpp"
 
 namespace idk
 {
     namespace core
     {
-        static inline BumpAllocator<config::memory::STATIC_ALLOCATOR_SIZE> &getStaticAllocator()
+        static constexpr size_t LIBIDK_ALLOCATOR_SIZE = 256 * idk::KILO;
+
+        static inline BumpAllocator<LIBIDK_ALLOCATOR_SIZE> &getStaticAllocator()
         {
-            static BumpAllocator<config::memory::STATIC_ALLOCATOR_SIZE> instance;
+            static BumpAllocator<LIBIDK_ALLOCATOR_SIZE> instance;
             return instance;
         }
     }

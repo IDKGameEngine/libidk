@@ -8,9 +8,9 @@
 #include <thread>
 #include <vector>
 
-#include "idk_core/types.hpp"
-#include "idk_core/metric.hpp"
-#include "idk_core/queue.hpp"
+#include "libidk/types.hpp"
+#include "libidk/metric.hpp"
+#include "libidk/queue.hpp"
 
 namespace idk::core
 {

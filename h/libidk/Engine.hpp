@@ -1,9 +1,9 @@
 #pragma once
 
-#include "idk_core/types.hpp"
-#include "idk_core/cfgparser.hpp"
-#include "idk_core/Timer.hpp"
-#include "idk_core/raii.hpp"
+#include "libidk/types.hpp"
+#include "libidk/cfgparser.hpp"
+#include "libidk/Timer.hpp"
+#include "libidk/raii.hpp"
 #include <vector>
 
 namespace idk

@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <stdalign.h>
 
-#include "idk_core/detail/AllocatorImpl.hpp"
+#include "libidk/detail/AllocatorImpl.hpp"
 
 namespace idk::core
 {

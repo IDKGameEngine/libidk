@@ -1,4 +1,4 @@
-#include "idk_core/threadpool.hpp"
+#include "libidk/threadpool.hpp"
 
 namespace idk::core
 {

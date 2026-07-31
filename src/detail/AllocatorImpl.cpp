@@ -1,7 +1,7 @@
-#include "idk_core/detail/AllocatorImpl.hpp"
-#include "idk_core/assert.hpp"
-#include "idk_core/log.hpp"
-#include "idk_core/stdmem.hpp"
+#include "libidk/detail/AllocatorImpl.hpp"
+#include "libidk/assert.hpp"
+#include "libidk/log.hpp"
+#include "libidk/stdmem.hpp"
 
 namespace icd = idk::core::detail;
 

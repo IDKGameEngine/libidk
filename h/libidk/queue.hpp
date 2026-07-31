@@ -1,8 +1,8 @@
 #pragma once
 
-#include "idk_core/assert.hpp"
-#include "idk_core/log.hpp"
-#include "idk_core/types.hpp"
+#include "libidk/assert.hpp"
+#include "libidk/log.hpp"
+#include "libidk/types.hpp"
 
 #include <atomic>
 

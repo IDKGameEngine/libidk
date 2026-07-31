@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idk_core/types.hpp"
+#include "libidk/types.hpp"
 #include <memory>
 
 namespace idk::core

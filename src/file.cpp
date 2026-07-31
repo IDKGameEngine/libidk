@@ -1,6 +1,6 @@
-#include "idk_core/file.hpp"
-#include "idk_core/assert.hpp"
-#include "idk_core/log.hpp"
+#include "libidk/file.hpp"
+#include "libidk/assert.hpp"
+#include "libidk/log.hpp"
 
 #include <cstring>
 

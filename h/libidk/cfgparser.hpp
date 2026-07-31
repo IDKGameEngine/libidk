@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "idk_core/assert.hpp"
-#include "idk_core/log.hpp"
+#include "libidk/assert.hpp"
+#include "libidk/log.hpp"
 
 namespace idk
 {

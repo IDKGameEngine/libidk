@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idk_core/transform.hpp"
+#include "libidk/transform.hpp"
 
 namespace idk
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idk_core/types.hpp"
+#include "libidk/types.hpp"
 
 #include <cstddef>
 #include <cstdint>

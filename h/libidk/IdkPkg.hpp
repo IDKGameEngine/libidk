@@ -1,11 +1,11 @@
 #pragma once
 
-#include "idk_core/types.hpp"
-#include "idk_core/assert.hpp"
-#include "idk_core/stdstr.hpp"
-#include "idk_core/stdmem.hpp"
-#include "idk_core/Memory.hpp"
-#include "idk_core/Tuple.hpp"
+#include "libidk/types.hpp"
+#include "libidk/assert.hpp"
+#include "libidk/stdstr.hpp"
+#include "libidk/stdmem.hpp"
+#include "libidk/Memory.hpp"
+#include "libidk/Tuple.hpp"
 
 namespace idk::core
 {
