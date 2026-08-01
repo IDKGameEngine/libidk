@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libidk/Platform.hpp"
+#include "libidk/platform/Platform.hpp"
 #include "libidk/math.hpp"
 #include "libidk/metric.hpp"
 #include "libidk/log.hpp"
@@ -19,14 +19,14 @@ namespace idk
     public:
         PeriodicTimer(uint64_t rateHz = 1000000000)
         :   periodNs_(0),
-            startTimeNs_(Platform::getSysTimeNs())
+            startTimeNs_(platform::getSysTimeNs())
         {
             setRateHz(rateHz);
         }
 
         bool expired()
         {
-            uint64_t currTimeNs = Platform::getSysTimeNs();
+            uint64_t currTimeNs = platform::getSysTimeNs();
             if ((currTimeNs - startTimeNs_) >= periodNs_)
             {
                 return true;
@@ -36,7 +36,7 @@ namespace idk
 
         void reset()
         {
-            startTimeNs_ = Platform::getSysTimeNs();
+            startTimeNs_ = platform::getSysTimeNs();
         }
     
         void setRateHz(uint64_t rateHz)
@@ -46,7 +46,7 @@ namespace idk
 
         float getExpiryAlpha()
         {
-            uint64_t currTimeNs = Platform::getSysTimeNs();
+            uint64_t currTimeNs = platform::getSysTimeNs();
             float alpha = float(currTimeNs - startTimeNs_) / float(periodNs_);
             return idk::clamp(alpha, 0.0f, 1.0f);
         }

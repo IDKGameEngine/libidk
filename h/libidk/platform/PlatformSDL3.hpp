@@ -14,11 +14,12 @@ namespace idk::platform
         ~PlatformSDL3();
         virtual void update(idk::IEngine*) final;
         virtual void shutdown(idk::IEngine*) final;
+        virtual Window *getWindow() final;
 
     private:
         RaiiFunc<void()>          mRaii;
         idk::platform::WindowSDL3 mWin;
-
     };
+
 }
 

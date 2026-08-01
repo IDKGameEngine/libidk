@@ -13,6 +13,7 @@ static void PlatformSDL3GLRaiiFunc()
 
     SDL_SetAppMetadata("BitchAss", "v0.0.0", "com.mellic03.BitchAss");
     fs::current_path(fs::path(SDL_GetBasePath()) / fs::path(IDK_ASSETS_DIRNAME));
+    VLOG_INFO("fs::current_path() == {}", fs::current_path().string());
 
     if (false == SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
@@ -53,7 +54,6 @@ static void PlatformSDL3GLRaiiFunc()
     {
         VLOG_ERROR("{}", SDL_GetError());
     }
-
 }
 
 
@@ -102,3 +102,8 @@ void idk::platform::PlatformSDL3GL::shutdown(idk::IEngine*)
 
 }
 
+
+idk::platform::Window *idk::platform::PlatformSDL3GL::getWindow()
+{
+    return &mWin;
+}

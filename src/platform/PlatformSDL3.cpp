@@ -6,6 +6,17 @@
 #include <filesystem>
 
 
+uint64_t idk::platform::getSysTimeMs()
+{
+    return SDL_GetTicks();
+}
+
+uint64_t idk::platform::getSysTimeNs()
+{
+    return SDL_GetTicksNS();
+}
+
+
 static void PlatformSDL3RaiiFunc()
 {
     namespace fs = std::filesystem;
@@ -59,4 +70,11 @@ void idk::platform::PlatformSDL3::shutdown(idk::IEngine*)
 {
 
 }
+
+
+idk::platform::Window *idk::platform::PlatformSDL3::getWindow()
+{
+    return &mWin;
+}
+
 
