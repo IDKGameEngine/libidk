@@ -1,4 +1,4 @@
-#include "libidk/platform/WindowSDL3GL.hpp"
+#include "libidk/platform/Window.hpp"
 #include "libidk/log.hpp"
 
 #include <glad/glad.h>
@@ -6,13 +6,13 @@
 #include <SDL3/SDL.h>
 
 
-idk::platform::WindowSDL3GL::WindowSDL3GL(const char *title, int w, int h)
+idk::platform::Window::Window(const char *title, int w, int h)
 :   mTitle(title),
     mWin(nullptr),
     mWidth(w),
     mHeight(h)
 {
-    VLOG_INFO("[WindowSDL3GL::WindowSDL3GL]");
+    VLOG_INFO("[Window::Window]");
 
     if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, SDL_WINDOW_OPENGL)))
     {
@@ -47,7 +47,7 @@ idk::platform::WindowSDL3GL::WindowSDL3GL(const char *title, int w, int h)
 }
 
 
-idk::platform::WindowSDL3GL::~WindowSDL3GL()
+idk::platform::Window::~Window()
 {
     SDL_GL_DestroyContext((SDL_GLContext)mGlCtx);
     SDL_DestroyWindow(mWin);
@@ -55,32 +55,32 @@ idk::platform::WindowSDL3GL::~WindowSDL3GL()
 }
 
 
-void idk::platform::WindowSDL3GL::makeCurrent()
+void idk::platform::Window::makeCurrent()
 {
     SDL_GL_MakeCurrent(mWin, (SDL_GLContext)mGlCtx);
 }
 
 
-void idk::platform::WindowSDL3GL::swapWindow()
+void idk::platform::Window::swapWindow()
 {
     SDL_GL_SwapWindow(mWin);
 }
 
 
-void idk::platform::WindowSDL3GL::showWindow(bool show)
+void idk::platform::Window::showWindow(bool show)
 {
     if (show) { SDL_HideWindow(mWin); }
     else      { SDL_ShowWindow(mWin); }
 }
 
 
-void idk::platform::WindowSDL3GL::setWindowResolution(int w, int h)
+void idk::platform::Window::setWindowResolution(int w, int h)
 {
     SDL_SetWindowSize(mWin, w, h);
 }
 
 
-void idk::platform::WindowSDL3GL::setRenderResolution(int w, int h)
+void idk::platform::Window::setRenderResolution(int w, int h)
 {
     (void)w;
     (void)h;

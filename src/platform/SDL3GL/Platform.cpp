@@ -1,19 +1,27 @@
-#include "libidk/platform/PlatformSDL3GL.hpp"
-#include "libidk/platform/WindowSDL3.hpp"
+#include "libidk/platform/Platform.hpp"
 #include "libidk/log.hpp"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 #include <filesystem>
 
+uint64_t idk::platform::getSysTimeMs()
+{
+    return SDL_GetTicks();
+}
 
-static void PlatformSDL3GLRaiiFunc()
+uint64_t idk::platform::getSysTimeNs()
+{
+    return SDL_GetTicksNS();
+}
+
+
+static void PlatformRaiiFunc()
 {
     namespace fs = std::filesystem;
 
     SDL_SetAppMetadata("BitchAss", "v0.0.0", "com.mellic03.BitchAss");
     fs::current_path(fs::path(SDL_GetBasePath()) / fs::path(IDK_ASSETS_DIRNAME));
-    VLOG_INFO("fs::current_path() == {}", fs::current_path().string());
 
     if (false == SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
@@ -57,8 +65,8 @@ static void PlatformSDL3GLRaiiFunc()
 }
 
 
-idk::platform::PlatformSDL3GL::PlatformSDL3GL(bool headless)
-:   mRaii(PlatformSDL3GLRaiiFunc),
+idk::platform::Platform::Platform(bool headless)
+:   mRaii(PlatformRaiiFunc),
     mWin("Window Title", 1280, 720)
 {
     (void)headless;
@@ -68,13 +76,13 @@ idk::platform::PlatformSDL3GL::PlatformSDL3GL(bool headless)
 }
 
 
-idk::platform::PlatformSDL3GL::~PlatformSDL3GL()
+idk::platform::Platform::~Platform()
 {
     SDL_Quit();
 }
 
 
-void idk::platform::PlatformSDL3GL::update(idk::IEngine *E)
+void idk::platform::Platform::update(idk::IEngine *E)
 {
     SDL_Event e;
     while (SDL_PollEvent(&e))
@@ -97,13 +105,8 @@ void idk::platform::PlatformSDL3GL::update(idk::IEngine *E)
 }
 
 
-void idk::platform::PlatformSDL3GL::shutdown(idk::IEngine*)
+void idk::platform::Platform::shutdown(idk::IEngine*)
 {
 
 }
 
-
-idk::platform::Window *idk::platform::PlatformSDL3GL::getWindow()
-{
-    return &mWin;
-}

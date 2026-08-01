@@ -1,3 +1,4 @@
+#include "libidk/assert.hpp"
 #include "libidk/log.hpp"
 #include "ansi.hpp"
 
@@ -92,7 +93,7 @@ void idk::vnlog(idk::LogType type, const char *title, const char *fmt, ...)
         if (type == LogType::FATAL)
         {
             fflush((std::FILE*)vl_fh_);
-            exit(1);
+            IDK_ASSERT(false, "Exiting");
         }
     }
 }

@@ -15,7 +15,9 @@ target_link_libraries(
     ${PROJECT_NAME} PUBLIC glad SDL3::SDL3-shared SDL3_net::SDL3_net glm::glm-header-only
 )
 target_include_directories(
-    ${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/h"
+    ${PROJECT_NAME} PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/h/libidk/platform/${IDK_PLATFORM}"
 )
 target_sources(
     ${PROJECT_NAME} PRIVATE
@@ -25,12 +27,13 @@ target_sources(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/file.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/log.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Service.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SharedMemory.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/threadpool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/transform.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpMessage.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/detail/AllocatorImpl.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/PlatformSDL3.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/PlatformSDL3GL.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/WindowSDL3.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/WindowSDL3GL.cpp"
 )
+
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/object")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform/${IDK_PLATFORM}")
+

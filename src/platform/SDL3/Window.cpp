@@ -1,10 +1,10 @@
-#include "libidk/platform/WindowSDL3.hpp"
+#include "libidk/platform/Window.hpp"
 #include "libidk/log.hpp"
 
 #include <SDL3/SDL.h>
 
 
-idk::platform::WindowSDL3::WindowSDL3(const char *title, int w, int h)
+idk::platform::Window::Window(const char *title, int w, int h)
 :   mTitle(title),
     mWin(SDL_CreateWindow(title, w, h, 0)),
     mWinSurf(SDL_GetWindowSurface(mWin)),
@@ -20,20 +20,20 @@ idk::platform::WindowSDL3::WindowSDL3(const char *title, int w, int h)
 }
 
 
-idk::platform::WindowSDL3::~WindowSDL3()
+idk::platform::Window::~Window()
 {
     SDL_DestroyWindow(mWin);
     SDL_Quit();
 }
 
 
-void idk::platform::WindowSDL3::makeCurrent()
+void idk::platform::Window::makeCurrent()
 {
 
 }
 
 
-void idk::platform::WindowSDL3::swapWindow()
+void idk::platform::Window::swapWindow()
 {
     SDL_Rect srcRect = {
         .x = 0,
@@ -54,20 +54,20 @@ void idk::platform::WindowSDL3::swapWindow()
 }
 
 
-void idk::platform::WindowSDL3::showWindow(bool show)
+void idk::platform::Window::showWindow(bool show)
 {
     if (show) { SDL_HideWindow(mWin); }
     else      { SDL_ShowWindow(mWin); }
 }
 
 
-void idk::platform::WindowSDL3::setWindowResolution(int w, int h)
+void idk::platform::Window::setWindowResolution(int w, int h)
 {
     SDL_SetWindowSize(mWin, w, h);
 }
 
 
-void idk::platform::WindowSDL3::setRenderResolution(int w, int h)
+void idk::platform::Window::setRenderResolution(int w, int h)
 {
     SDL_DestroySurface(mBackSurf);
     mBackSurf = SDL_CreateSurface(w, h, SDL_PIXELFORMAT_RGB24);
