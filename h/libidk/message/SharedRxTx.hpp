@@ -7,7 +7,7 @@ namespace idk
     class SharedRxer: public idk::MessageRxer
     {
     public:
-        SharedRxer(const char *label);
+        SharedRxer(const char *name, size_t size);
         virtual bool recvMsg(void *buf, size_t bufsz) override;
 
     private:
@@ -18,7 +18,7 @@ namespace idk
     class SharedTxer: public idk::MessageTxer
     {
     public:
-        SharedTxer(const char *label);
+        SharedTxer(const char *name, size_t size);
         virtual bool sendMsg(const void *buf, size_t bufsz) override;
 
     private:

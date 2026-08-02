@@ -7,13 +7,6 @@ struct NET_Address;
 
 namespace idk
 {
-    struct RemoteRxTxHeader
-    {
-        uint32_t magic;
-        uint32_t padding;
-    };
-
-
     class RemoteRxer: public idk::MessageRxer
     {
     public:

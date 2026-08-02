@@ -2,16 +2,62 @@
 
 #include "libidk/message/RemoteRxTx.hpp"
 
-#include "libidk/Config.hpp"
 #include "libidk/stdmem.hpp"
 #include "libidk/stdstr.hpp"
 #include "libidk/math.hpp"
 #include "libidk/log.hpp"
 
 
+struct Serializable
+{
+public:
+    virtual size_t serialize(uint8_t *dst) = 0;
+    virtual size_t deserialize(const uint8_t *src) = 0;
+
+protected:
+    template <typename T>
+    size_t write(uint8_t *dst, const T &x)
+    {
+        idk_memcpy(dst, &x, sizeof(T));
+        return sizeof(T);
+    }
+
+    template <typename T>
+    size_t read(const uint8_t *src, T &x)
+    {
+        idk_memcpy(&x, src, sizeof(T));
+        return sizeof(T);
+    }
+};
+
+
+struct RemoteRxTxHeader: public Serializable
+{
+    uint32_t magic;
+    uint32_t reserved;
+    RemoteRxTxHeader(uint32_t m=0): magic(m), reserved(0) {  }
+
+    virtual size_t serialize(uint8_t *dst) final
+    {
+        size_t n = 0;
+        n += write(dst+n, magic);
+        n += write(dst+n, reserved);
+        return n;
+    }
+
+    virtual size_t deserialize(const uint8_t *src) final
+    {
+        size_t n = 0;
+        n += read(src+n, magic);
+        n += read(src+n, reserved);
+        return n;
+    }
+};
+
+
 
 idk::RemoteRxer::RemoteRxer(uint16_t port)
-:   mUdpMagic(idk::config::get("UDP_MAGIC").toU32()),
+:   mUdpMagic(0xDEADBEBE),
     mPort(port)
 {
     VLOG_INFO("[RemoteRxer] UDP_MAGIC={}", mUdpMagic);
@@ -51,7 +97,7 @@ bool idk::RemoteRxer::recvMsg(void *buf, size_t bufsz)
 
 
 idk::RemoteTxer::RemoteTxer(const char *hostname, uint16_t dstport)
-:   mUdpMagic(idk::config::get("UDP_MAGIC").toU32()),
+:   mUdpMagic(0xDEADBEBE),
     mDstPort(dstport)
 {
     VLOG_INFO("[RemoteTxer] UDP_MAGIC={}", mUdpMagic);
@@ -80,7 +126,7 @@ idk::RemoteTxer::~RemoteTxer()
 }
 
 
-bool idk::RemoteTxer::sendMsg(const void *data, size_t size)
+bool idk::RemoteTxer::sendMsg(const void *srcBuf, size_t srcSize)
 {
     if (!mRemoteAddr)
     {
@@ -88,7 +134,12 @@ bool idk::RemoteTxer::sendMsg(const void *data, size_t size)
         return false;
     }
 
-    if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, data, size))
+    size_t bufsz = 0;
+    bufsz += RemoteRxTxHeader(0xDEADBEBE).serialize(mBuf+bufsz);
+    idk_memcpy(mBuf+bufsz, srcBuf, srcSize);
+    bufsz += srcSize;
+
+    if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, mBuf, bufsz))
     {
         VLOG_WARN("[RemoteTxer::sendmsg] Failed to send datagram: {}", SDL_GetError());
         return false;
