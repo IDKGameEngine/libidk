@@ -134,12 +134,13 @@ bool idk::RemoteTxer::sendMsg(const void *srcBuf, size_t srcSize)
         return false;
     }
 
-    size_t bufsz = 0;
-    bufsz += RemoteRxTxHeader(0xDEADBEBE).serialize(mBuf+bufsz);
-    idk_memcpy(mBuf+bufsz, srcBuf, srcSize);
-    bufsz += srcSize;
+    // size_t bufsz = 0;
+    // bufsz += RemoteRxTxHeader(0xDEADBEBE).serialize(mBuf+bufsz);
+    // idk_memcpy(mBuf+bufsz, srcBuf, srcSize);
+    // bufsz += srcSize;
 
-    if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, mBuf, bufsz))
+    // if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, mBuf, bufsz))
+    if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, srcBuf, srcSize))
     {
         VLOG_WARN("[RemoteTxer::sendmsg] Failed to send datagram: {}", SDL_GetError());
         return false;

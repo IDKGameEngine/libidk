@@ -28,11 +28,12 @@ static void PlatformRaiiFunc()
 }
 
 
-idk::platform::Platform::Platform(bool headless)
+idk::platform::Platform::Platform()
 :   mRaii(PlatformRaiiFunc),
-    mWin("Window Title", 1280, 720)
+    mWin("Window Title", 1280, 720),
+    mStat{Status::Running}
 {
-    (void)headless;
+
 }
 
 
@@ -42,7 +43,24 @@ idk::platform::Platform::~Platform()
 }
 
 
-void idk::platform::Platform::update(idk::IEngine *E)
+
+void idk::platform::Platform::update()
+{
+
+}
+
+void idk::platform::Platform::shutdown()
+{
+
+}
+
+idk::platform::Platform::Status idk::platform::Platform::getStatus()
+{
+
+}
+
+
+void idk::platform::Platform::update()
 {
     SDL_Event e;
     while (SDL_PollEvent(&e))
@@ -61,11 +79,3 @@ void idk::platform::Platform::update(idk::IEngine *E)
         }
     }
 }
-
-
-void idk::platform::Platform::shutdown(idk::IEngine*)
-{
-
-}
-
-

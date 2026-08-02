@@ -65,11 +65,12 @@ static void PlatformRaiiFunc()
 }
 
 
-idk::platform::Platform::Platform(bool headless)
+idk::platform::Platform::Platform()
 :   mRaii(PlatformRaiiFunc),
-    mWin("Window Title", 1280, 720)
+    mWin("Window Title", 1280, 720),
+    mStat{Status::Running},
+    mNumEventFuncs(0)
 {
-    (void)headless;
     // SDL_WindowFlags flags = SDL_WINDOW_OPENGL;
     // if (headless) { flags |= SDL_WINDOW_HIDDEN; }
     mWin.makeCurrent();
@@ -82,21 +83,38 @@ idk::platform::Platform::~Platform()
 }
 
 
-void idk::platform::Platform::update(idk::IEngine *E)
+bool idk::platform::Platform::running()
+{
+    return (mStat.load() == Status::Running);
+}
+
+
+void idk::platform::Platform::shutdown()
+{
+    mStat.store(Status::ShutdownComplete);
+}
+
+
+void idk::platform::Platform::update()
 {
     SDL_Event e;
     while (SDL_PollEvent(&e))
     {
+        for (size_t i=0; i<mNumEventFuncs; i++)
+        {
+            mEventFuncs[i](*this, &e, mEventArgs[i]);
+        }
+
         if (e.type == SDL_EVENT_QUIT)
         {
-            E->shutdown();
+            shutdown();
         }
 
         if (e.type == SDL_EVENT_KEY_UP)
         {
             if (e.key.scancode == SDL_SCANCODE_ESCAPE)
             {
-                E->shutdown();
+                shutdown();
             }
         }
     }
@@ -105,8 +123,30 @@ void idk::platform::Platform::update(idk::IEngine *E)
 }
 
 
-void idk::platform::Platform::shutdown(idk::IEngine*)
+idk::platform::Status idk::platform::Platform::getStatus()
 {
+    return mStat.load();
+}
 
+
+idk::platform::Window &idk::platform::Platform::getWindow()
+{
+    return mWin;
+}
+
+
+bool idk::platform::Platform::addEventCallback(EventFunc func, void *arg)
+{
+    if (mNumEventFuncs >= MAX_EVENT_FUNCS)
+    {
+        VLOG_WARN("[Platform::addEventCallback] mEventFuncs full!");
+        return false;
+    }
+
+    size_t idx = mNumEventFuncs++;
+    mEventFuncs[idx] = func;
+    mEventArgs[idx] = arg;
+
+    return true;
 }
 

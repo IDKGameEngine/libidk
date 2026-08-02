@@ -31,14 +31,4 @@ namespace idk::core
     };
 
     #define IDK_SERVICE_CTOR(DerivedType) idk::core::Service(#DerivedType, idk_typeid<DerivedType>())
-
-
-    class IPlatformService: public Service
-    {
-    public:
-        using Service::Service;
-        virtual void getWindowSize(int &w, int &h) = 0;
-        virtual void swapWindow() = 0;
-    };
-
 }

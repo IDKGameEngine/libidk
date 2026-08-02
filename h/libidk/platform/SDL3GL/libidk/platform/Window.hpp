@@ -1,11 +1,13 @@
 #pragma once
 
-#include "libidk/platform/IPlatform.hpp"
-
+#include "libidk/Types.hpp"
 struct SDL_Window;
 
 namespace idk::platform
 {
+    using WinCtxType = SDL_Window;
+    using GpuCtxType = void;
+
     class Window: public idk::Immobile
     {
     private:
@@ -19,15 +21,17 @@ namespace idk::platform
         Window(const char *title, int w, int h);
         ~Window();
 
-        virtual int   getWidth() const final { return mWidth; };
-        virtual int   getHeight() const final { return mHeight; };
-        virtual void *getNativeHandle() const final { return mWin; };
-        virtual void *getGpuContext() const final { return mGlCtx; };
-        virtual void  makeCurrent() final;
-        virtual void  swapWindow() final;
-        virtual void  showWindow(bool show) final;
-        virtual void  setWindowResolution(int w, int h) final;
-        virtual void  setRenderResolution(int w, int h) final;
+        WinCtxType *getWinCtx() const { return mWin; };
+        GpuCtxType *getGpuCtx() const { return mGlCtx; };
+
+        int getWidth() const { return mWidth; };
+        int getHeight() const { return mHeight; };
+
+        void makeCurrent();
+        void swapWindow();
+        void showWindow(bool show);
+        void setWindowResolution(int w, int h);
+        void setRenderResolution(int w, int h);
 
     };
 }

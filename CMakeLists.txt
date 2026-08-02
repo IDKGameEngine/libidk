@@ -12,7 +12,12 @@ target_compile_options(
     ${PROJECT_NAME} PUBLIC -Werror -Wall -Wextra
 )
 target_link_libraries(
-    ${PROJECT_NAME} PUBLIC glad SDL3::SDL3-shared SDL3_net::SDL3_net glm::glm-header-only
+    ${PROJECT_NAME} PUBLIC
+    glad
+    SDL3::SDL3-shared
+    SDL3_image::SDL3_image
+    SDL3_net::SDL3_net
+    glm::glm-header-only
 )
 target_include_directories(
     ${PROJECT_NAME} PUBLIC
@@ -27,11 +32,11 @@ target_sources(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Config.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/file.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/log.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/New.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Service.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SharedMemory.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/threadpool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/transform.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/detail/AllocatorImpl.cpp"
 )
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")

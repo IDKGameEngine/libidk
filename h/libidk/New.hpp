@@ -1,37 +1,33 @@
 #pragma once
 
+#include "libidk/memory/Allocator.hpp"
 #include "libidk/metric.hpp"
-#include "libidk/Allocator.hpp"
 
 namespace idk
 {
     namespace core
     {
         static constexpr size_t LIBIDK_ALLOCATOR_SIZE = 256 * idk::KILO;
-
-        static inline BumpAllocator<LIBIDK_ALLOCATOR_SIZE> &getStaticAllocator()
-        {
-            static BumpAllocator<LIBIDK_ALLOCATOR_SIZE> instance;
-            return instance;
-        }
+        idk::Allocator *getStaticAllocator();
     }
 
     template <typename T, typename... Args>
     static inline T *New(Args&&... args)
     {
-        return core::getStaticAllocator().New<T>(args...);
+        void *ptr = core::getStaticAllocator()->alloc(sizeof(T), alignof(T));
+        return new (ptr) T(args...);
     }
 
     template <typename T>
     static inline T *NewArray(size_t count)
     {
-        void *ptr = core::getStaticAllocator().Alloc(count*sizeof(T), alignof(T));
+        void *ptr = core::getStaticAllocator()->alloc(count*sizeof(T), alignof(T));
         return reinterpret_cast<T*>(ptr);
     }
 
-    // static inline float GetAllocatorMemoryUsage()
-    // {
-    //     size_t size = core::getStaticAllocator().GetSize();
-    //     return float(size) / core::LIBIDK_ALLOCATOR_SIZE;
-    // }
+    static inline float GetAllocatorMemoryUsage()
+    {
+        size_t size = core::getStaticAllocator()->size();
+        return float(size) / core::LIBIDK_ALLOCATOR_SIZE;
+    }
 }
