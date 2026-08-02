@@ -22,11 +22,11 @@ namespace idk
         uint8_t *getTail() { return mTail; }
         size_t   getSize() { return mTail - mBase; }
 
-        bool write(const void *data, size_t size)
+        bool write(const void *buf, size_t size)
         {
             if (mTail + size <= mEnd)
             {
-                idk_memcpy(&data, mTail, size);
+                idk_memcpy(mTail, buf, size);
                 mTail += size;
                 return true;
             }
@@ -34,7 +34,7 @@ namespace idk
         }
 
         template <typename T>
-        bool write(const T &data) { return this->write(&data, sizeof(T)); }
+        bool write(const T &x) { return this->write(&x, sizeof(T)); }
 
     };
 
@@ -54,17 +54,19 @@ namespace idk
         const uint8_t *getEnd()  const { return mEnd; }
         const uint8_t *getTail() const { return mTail; }
 
-        template <typename T>
-        bool read(T &data)
+        bool read(void *buf, size_t size)
         {
-            if (mTail + sizeof(T) <= mEnd)
+            if (mTail + size <= mEnd)
             {
-                idk_memcpy(&data, mTail, sizeof(T));
-                mTail += sizeof(T);
+                idk_memcpy(buf, mTail, size);
+                mTail += size;
                 return true;
             }
             return false;
         }
+
+        template <typename T>
+        bool read(T &x) { return this->read(&x, sizeof(T)); }
 
         template <typename T>
         T read()
