@@ -8,64 +8,65 @@ struct NET_Datagram;
 
 namespace idk
 {
-    struct RemoteMessageHeader
+    namespace RemoteRxTx
     {
-        uint32_t authToken;
-        uint16_t payloadType;
-        uint16_t payloadSize;
-    };
+        static constexpr size_t MAX_PAYLOAD_SIZE = 1024;
 
-    using RemoteMessagePayload = uint8_t[1024 - sizeof(RemoteMessageHeader)];
+        struct PayloadBuffer
+        {
+            uint8_t data[RemoteRxTx::MAX_PAYLOAD_SIZE];
+        };
 
-    struct RemoteMessageData
-    {
-        RemoteMessageHeader header;
-        RemoteMessagePayload payload;
-    };
-
-
-    class RemoteRxer: public idk::MessageRxer
-    {
-    public:
-        using MessageRxer::recvMsg;
-
-        RemoteRxer(uint16_t port);
-        virtual bool recvMsg(void *data, size_t size) override;
-        bool replyMsg(uint16_t port, void *data, size_t size);
-
-    private:
-        const uint32_t        mAuthToken;
-        NET_DatagramSocket   *mSocket;
-        uint16_t              mPort;
-        NET_Address          *mLastSender;
-        RemoteMessageData     mMessageBuf;
-        RemoteMessageHeader  &mHeader;
-        RemoteMessagePayload &mPayload;
-
-        NET_Datagram *beginRecvMsg();
-        bool goodRecvMsg(NET_Datagram*);
-        bool badRecvMsg(NET_Datagram*);
-    };
+        struct MessageBuffer
+        {
+            MessageHeader header;
+            PayloadBuffer payload;
+        };
+    }
 
 
-    class RemoteTxer: public idk::MessageTxer
-    {
-    public:
-        using MessageTxer::sendMsg;
+    // class RemoteRxer: public idk::MessageRxer
+    // {
+    // public:
+    //     using MessageRxer::recvMsg;
 
-        RemoteTxer(const char *hostname, uint16_t dstport);
-        ~RemoteTxer();
-        virtual bool sendMsg(const void *data, size_t size) override;
+    //     RemoteRxer(uint16_t port);
+    //     virtual bool recvMsg(void *data, size_t size) override;
+    //     bool replyMsg(uint16_t port, void *data, size_t size);
 
-    private:
-        const uint32_t        mAuthToken;
-        NET_DatagramSocket   *mSocket;
-        NET_Address          *mRemoteAddr;
-        uint16_t              mDstPort;
-        RemoteMessageData     mMessageBuf;
-        RemoteMessageHeader  &mHeader;
-        RemoteMessagePayload &mPayload;
-    };
+    // private:
+    //     const uint32_t        mAuthToken;
+    //     NET_DatagramSocket   *mSocket;
+    //     uint16_t              mPort;
+    //     NET_Address          *mLastSender;
+    //     RemoteMessageData     mMessageBuf;
+    //     RemoteMessageHeader  &mHeader;
+    //     RemoteMessagePayload &mPayload;
+
+    //     NET_Datagram *beginRecvMsg();
+    //     bool goodRecvMsg(NET_Datagram*);
+    //     bool badRecvMsg(NET_Datagram*);
+    // };
+
+
+    // class RemoteTxer: public idk::MessageTxer
+    // {
+    // public:
+    //     using MessageTxer::sendMsg;
+
+    //     RemoteTxer(const char *hostname, uint16_t dstport);
+    //     ~RemoteTxer();
+    //     virtual bool sendMsg(const void *data, size_t size) override;
+
+    // private:
+    //     const uint32_t        mAuthToken;
+    //     NET_DatagramSocket   *mSocket;
+    //     NET_Address          *mRemoteAddr;
+    //     uint16_t              mDstPort;
+    //     RemoteMessageData     mMessageBuf;
+    //     RemoteMessageHeader  &mHeader;
+    //     RemoteMessagePayload &mPayload;
+    // };
 
 
 
@@ -77,26 +78,28 @@ namespace idk
 
         RemoteRxTxer(const char *hostname, uint16_t dstport);
         ~RemoteRxTxer();
+    
+        virtual MessageRecvInfo *recvMsg() override;
+        virtual bool sendMsg(const void *src, size_t size, MessagePayloadType type={0}) override;
 
-        RemoteMessageData *recvMsg();
-
-        virtual bool recvMsg(void *data, size_t size) override;
-        virtual bool sendMsg(const void *data, size_t size) override;
-        bool replyMsg(void *data, size_t size);
 
     private:
+        using PayloadBufType = RemoteRxTx::PayloadBuffer;
+        using MessageBufType = RemoteRxTx::MessageBuffer;
+
         const uint32_t        mAuthToken;
         NET_DatagramSocket   *mSocket;
         NET_Address          *mRemoteAddr;
         NET_Address          *mLastSender;
         uint16_t              mPort;
-        RemoteMessageData     mMessageBuf;
-        RemoteMessageHeader  &mHeader;
-        RemoteMessagePayload &mPayload;
+        MessageHeader        &mHeader;
+        PayloadBufType       &mPayload;
+        MessageBufType        mMsgBuf;
+        MessageRecvInfo       mRecvInfo;
 
         NET_Datagram *beginRecvMsg();
-        bool goodRecvMsg(NET_Datagram*);
-        bool badRecvMsg(NET_Datagram*);
+        MessageRecvInfo *goodRecvMsg(NET_Datagram*);
+        MessageRecvInfo *badRecvMsg(NET_Datagram*);
     };
 
 }

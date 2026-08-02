@@ -68,12 +68,7 @@ namespace idk
         template <typename T>
         bool read(T &x) { return this->read(&x, sizeof(T)); }
 
-        template <typename T>
-        T read()
-        {
-            T data;
-            this->read(data);
-            return data;
-        }
+        // template <typename T>
+        // T read() { T x; this->read(x); return x; }
     };
 }

@@ -8,7 +8,7 @@ namespace idk
     {
     public:
         LocalRxer(uint8_t port);
-        virtual bool recvMsg(void *buf, size_t bufsz) override;
+        virtual MessageRecvInfo *recvMsg() override;
 
     private:
         uint8_t mPort;
@@ -19,7 +19,7 @@ namespace idk
     {
     public:
         LocalTxer(uint8_t port);
-        virtual bool sendMsg(const void *buf, size_t bufsz) override;
+        virtual bool sendMsg(const void *src, size_t size, MessagePayloadType type={0}) override;
 
     private:
         uint8_t mPort;
