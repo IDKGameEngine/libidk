@@ -172,7 +172,6 @@ idk::RemoteRxTxer::RemoteRxTxer(const char *hostname, uint16_t port)
 :   mAuthToken(0xDEADBEBE),
     mSocket(nullptr),
     mRemoteAddr(nullptr),
-    mLastSender(nullptr),
     mPort(port),
     mHeader(mMsgBuf.header),
     mPayload(mMsgBuf.payload)
@@ -226,11 +225,11 @@ idk::MessageRecvInfo *idk::RemoteRxTxer::recvMsg()
     }
     decoder.read(mPayload.data, mHeader.payloadSize);
 
-    if (mLastSender)
+    if (mRemoteAddr)
     {
-        NET_UnrefAddress(mLastSender);
+        NET_UnrefAddress(mRemoteAddr);
     }
-    mLastSender = NET_RefAddress(dgram->addr);
+    mRemoteAddr = NET_RefAddress(dgram->addr);
 
     return goodRecvMsg(dgram);
 }

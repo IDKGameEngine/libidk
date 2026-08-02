@@ -90,7 +90,6 @@ namespace idk
         const uint32_t        mAuthToken;
         NET_DatagramSocket   *mSocket;
         NET_Address          *mRemoteAddr;
-        NET_Address          *mLastSender;
         uint16_t              mPort;
         MessageHeader        &mHeader;
         PayloadBufType       &mPayload;
