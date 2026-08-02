@@ -14,8 +14,8 @@ namespace idk
         uint8_t *mTail;
 
     public:
-        ByteEncoder(uint8_t *dstBuf, size_t dstSize)
-        :   mBase(dstBuf), mEnd(mBase+dstSize), mTail(mBase) {  }
+        ByteEncoder(void *dstBuf, size_t dstSize)
+        :   mBase((uint8_t*)dstBuf), mEnd(mBase+dstSize), mTail(mBase) {  }
 
         uint8_t *getBase() { return mBase; }
         uint8_t *getEnd()  { return mEnd; }
@@ -47,8 +47,8 @@ namespace idk
         const uint8_t *mTail;
 
     public:
-        ByteDecoder(const uint8_t *srcBuf, size_t srcSize)
-        :   mBase(srcBuf), mEnd(mBase+srcSize), mTail(mBase) {  }
+        ByteDecoder(const void *srcBuf, size_t srcSize)
+        :   mBase((const uint8_t*)srcBuf), mEnd(mBase+srcSize), mTail(mBase) {  }
 
         const uint8_t *getBase() const { return mBase; }
         const uint8_t *getEnd()  const { return mEnd; }
