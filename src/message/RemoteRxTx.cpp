@@ -54,7 +54,11 @@ bool idk::RemoteRxer::recvMsg(void *dstBuf, size_t dstSize)
 
 bool idk::RemoteRxer::replyMsg(void *srcBuf, size_t srcSize)
 {
-    if (!mLastDatagram) { return false; }
+    if (!mLastDatagram)
+    {
+        VLOG_WARN("[RemoteRxer::replyMsg] Failed to reply message: no previous sender");
+        return false;
+    }
 
     ByteEncoder encoder(mBuffer, sizeof(mBuffer));
     encoder.write(RemoteMessageHeader{mAuthToken, uint32_t(srcSize)});
