@@ -8,7 +8,7 @@ struct NET_Datagram;
 
 namespace idk
 {
-    struct __attribute__((packed)) RemoteMessageHeader
+    struct RemoteMessageHeader
     {
         uint32_t authToken;
         uint16_t payloadType;
@@ -17,7 +17,7 @@ namespace idk
 
     using RemoteMessagePayload = uint8_t[1024 - sizeof(RemoteMessageHeader)];
 
-    struct __attribute__((packed)) RemoteMessageData
+    struct RemoteMessageData
     {
         RemoteMessageHeader header;
         RemoteMessagePayload payload;
@@ -77,6 +77,9 @@ namespace idk
 
         RemoteRxTxer(const char *hostname, uint16_t dstport);
         ~RemoteRxTxer();
+
+        RemoteMessageData *recvMsg();
+
         virtual bool recvMsg(void *data, size_t size) override;
         virtual bool sendMsg(const void *data, size_t size) override;
         bool replyMsg(void *data, size_t size);

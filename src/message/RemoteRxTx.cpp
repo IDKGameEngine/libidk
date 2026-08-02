@@ -206,6 +206,14 @@ idk::RemoteRxTxer::~RemoteRxTxer()
 }
 
 
+
+idk::RemoteMessageData *idk::RemoteRxTxer::recvMsg()
+{
+    return nullptr;
+}
+
+
+
 bool idk::RemoteRxTxer::recvMsg(void *dstBuf, size_t dstSize)
 {
     NET_Datagram *d = beginRecvMsg();
@@ -219,7 +227,7 @@ bool idk::RemoteRxTxer::recvMsg(void *dstBuf, size_t dstSize)
     }
     if (mHeader.payloadSize > dstSize)
     {
-        VLOG_WARN("[RemoteRxTxer::recvMsg] payloadSize is larger than dstSize");
+        VLOG_WARN("[RemoteRxTxer::recvMsg] payloadSize larger than dstSize ({} > {})", mHeader.payloadSize, dstSize);
         return badRecvMsg(d);
     }
     uint8_t *payload = (uint8_t*)(d->buf) + sizeof(mHeader);
