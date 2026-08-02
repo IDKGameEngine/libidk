@@ -22,13 +22,13 @@ namespace idk
 
         RemoteRxer(uint16_t port);
         virtual bool recvMsg(void *data, size_t size) override;
-        bool replyMsg(void *data, size_t size);
+        bool replyMsg(uint16_t port, void *data, size_t size);
 
     private:
         const uint32_t      mAuthToken;
         NET_DatagramSocket *mSocket;
-        NET_Datagram       *mLastDatagram;
         uint16_t            mPort;
+        NET_Address        *mLastSender;
         uint8_t             mBuffer[1500];
 
         NET_Datagram *beginRecvMsg();
@@ -53,4 +53,5 @@ namespace idk
         uint16_t mDstPort;
         uint8_t mBuffer[1500];
     };
+
 }
