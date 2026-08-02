@@ -12,6 +12,8 @@
 
 idk::RemoteRxer::RemoteRxer(uint16_t port)
 :   mAuthToken(0xDEADBEBE),
+    mSocket(nullptr),
+    mLastDatagram(nullptr),
     mPort(port)
 {
     if (!NET_Init())
@@ -35,6 +37,7 @@ bool idk::RemoteRxer::recvMsg(void *dstBuf, size_t dstSize)
     auto header = decoder.read<RemoteMessageHeader>();
     if (header.authToken != mAuthToken)
     {
+        VLOG_WARN("[RemoteRxer::recvMsg] header.authToken != mAuthToken");
         return badRecvMsg(d);
     }
     if (header.payloadSize > dstSize)
@@ -43,18 +46,35 @@ bool idk::RemoteRxer::recvMsg(void *dstBuf, size_t dstSize)
         return badRecvMsg(d);
     }
 
+    if (mLastDatagram)
+    {
+        NET_DestroyDatagram(mLastDatagram);
+    }
+    mLastDatagram = d;
+
     idk_memcpy(dstBuf, decoder.getTail(), header.payloadSize);
 
-    if (onRecvMsg)
-    {
-        size_t n = onRecvMsg(dstBuf, header.payloadSize, mResBuf);
-        if (n > 0)
-        {
-            // send response
-        }
-    }
-
     return goodRecvMsg(d);
+}
+
+
+bool idk::RemoteRxer::replyMsg(void *srcBuf, size_t srcSize)
+{
+    if (!mLastDatagram) { return false; }
+
+    ByteEncoder encoder(mBuffer, sizeof(mBuffer));
+    encoder.write(RemoteMessageHeader{mAuthToken, uint32_t(srcSize)});
+    if (!encoder.write(srcBuf, srcSize))
+    {
+        VLOG_WARN("[RemoteRxer::replyMsg] Failed to send message: srcSize too large");
+        return false;
+    }
+    if (!NET_SendDatagram(mSocket, mLastDatagram->addr, mLastDatagram->port, encoder.getBase(), encoder.getSize()))
+    {
+        VLOG_WARN("[RemoteRxer::replyMsg] Failed to send datagram: {}", SDL_GetError());
+        return false;
+    }
+    return true;
 }
 
 
@@ -115,6 +135,7 @@ idk::RemoteTxer::RemoteTxer(const char *hostname, uint16_t dstport)
 
 idk::RemoteTxer::~RemoteTxer()
 {
+    NET_UnrefAddress(mRemoteAddr);
     NET_DestroyDatagramSocket(mSocket);
 }
 
