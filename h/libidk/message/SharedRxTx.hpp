@@ -12,7 +12,7 @@ namespace idk
 
     private:
         void *mRegion;
-        int64_t mTick;
+        uint64_t mTick;
     };
 
     class SharedTxer: public idk::MessageTxer

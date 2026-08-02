@@ -2,6 +2,7 @@
 
 #include "libidk/message/RemoteRxTx.hpp"
 
+#include "libidk/Config.hpp"
 #include "libidk/stdmem.hpp"
 #include "libidk/stdstr.hpp"
 #include "libidk/math.hpp"
@@ -10,8 +11,10 @@
 
 
 idk::RemoteRxer::RemoteRxer(uint16_t port)
-:   mPort(port)
+:   mUdpMagic(idk::config::get("UDP_MAGIC").toU32()),
+    mPort(port)
 {
+    VLOG_INFO("[RemoteRxer] UDP_MAGIC={}", mUdpMagic);
     if (!NET_Init())
     {
         VLOG_FATAL("[RemoteRxer::RemoteRxer] Failure initializing SDL3_Net: {}", SDL_GetError());
@@ -48,8 +51,10 @@ bool idk::RemoteRxer::recvMsg(void *buf, size_t bufsz)
 
 
 idk::RemoteTxer::RemoteTxer(const char *hostname, uint16_t dstport)
-:   mDstPort(dstport)
+:   mUdpMagic(idk::config::get("UDP_MAGIC").toU32()),
+    mDstPort(dstport)
 {
+    VLOG_INFO("[RemoteTxer] UDP_MAGIC={}", mUdpMagic);
     if (!NET_Init())
     {
         VLOG_FATAL("[RemoteTxer::RemoteTxer] Failure initializing SDL3_Net: {}", SDL_GetError());
@@ -82,6 +87,7 @@ bool idk::RemoteTxer::sendMsg(const void *data, size_t size)
         VLOG_WARN("[RemoteTxer::sendmsg] Remote address is NULL");
         return false;
     }
+
     if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, data, size))
     {
         VLOG_WARN("[RemoteTxer::sendmsg] Failed to send datagram: {}", SDL_GetError());

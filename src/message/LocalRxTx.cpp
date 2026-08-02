@@ -9,58 +9,64 @@
 static constexpr size_t MAX_REGIONS = 32;
 struct LocalRxTxRegion
 {
-    std::mutex mutex;
-    int64_t tick;
+    uint64_t tick;
     uint8_t data[1500];
-    LocalRxTxRegion(): mutex(), tick(0), data() {  }
+    LocalRxTxRegion(): tick(0), data() {  }
 };
-static LocalRxTxRegion *localRegions[MAX_REGIONS];
+static std::mutex mutexes_[MAX_REGIONS];
+static LocalRxTxRegion *regions_[MAX_REGIONS];
+
 
 
 idk::LocalRxer::LocalRxer(uint8_t port)
-:   mRegion(nullptr),
+:   mPort(port),
     mTick(0)
 {
-    if (localRegions[port] == nullptr)
+    std::lock_guard<std::mutex> lock(mutexes_[port]);
+    if (regions_[port] == nullptr)
     {
-        localRegions[port] = idk::New<LocalRxTxRegion>();
+        regions_[port] = idk::New<LocalRxTxRegion>();
     }
-    mRegion = localRegions[port];
 }
 
 bool idk::LocalRxer::recvMsg(void *buf, size_t bufsz)
 {
-    auto *r = (LocalRxTxRegion*)mRegion;
-    std::lock_guard<std::mutex>(r->mutex);
-    if (mTick < r->tick)
+    std::lock_guard<std::mutex> lock(mutexes_[mPort]);
+    LocalRxTxRegion *r = regions_[mPort];
+
+    if (mTick >= r->tick)
     {
-        mTick = r->tick;
-        IDK_ASSERT(bufsz <= sizeof(r->data), "bufsz too large!");
-        idk_memcpy(buf, r->data, bufsz);
-        return true;
+        return false;
     }
-    return false;
+
+    IDK_ASSERT(bufsz <= sizeof(r->data), "bufsz too large!");
+    idk_memcpy(buf, r->data, bufsz);
+    mTick = r->tick;
+
+    return true;
 }
 
 
 
 idk::LocalTxer::LocalTxer(uint8_t port)
-:   mRegion(nullptr)
+:   mPort(port)
 {
-    if (localRegions[port] == nullptr)
+    std::lock_guard<std::mutex> lock(mutexes_[port]);
+    if (regions_[port] == nullptr)
     {
-        localRegions[port] = idk::New<LocalRxTxRegion>();
+        regions_[port] = idk::New<LocalRxTxRegion>();
     }
-    mRegion = localRegions[port];
 }
 
 bool idk::LocalTxer::sendMsg(const void *buf, size_t bufsz)
 {
-    auto *r = (LocalRxTxRegion*)mRegion;
-    std::lock_guard<std::mutex>(r->mutex);
+    std::lock_guard<std::mutex> lock(mutexes_[mPort]);
+    LocalRxTxRegion *r = regions_[mPort];
+
     IDK_ASSERT(bufsz <= sizeof(r->data), "bufsz too large!");
     idk_memcpy(r->data, buf, bufsz);
     r->tick += 1;
+
     return true;
 }
 

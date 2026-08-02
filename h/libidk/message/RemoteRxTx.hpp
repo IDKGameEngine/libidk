@@ -7,26 +7,44 @@ struct NET_Address;
 
 namespace idk
 {
+    struct RemoteRxTxHeader
+    {
+        uint32_t magic;
+        uint32_t padding;
+    };
+
+
     class RemoteRxer: public idk::MessageRxer
     {
-    private:
-        NET_DatagramSocket *mSocket;
-        uint16_t mPort;
     public:
+        using MessageRxer::recvMsg;
+
         RemoteRxer(uint16_t port);
         virtual bool recvMsg(void *data, size_t size) override;
+
+    private:
+        const uint32_t mUdpMagic;
+        NET_DatagramSocket *mSocket;
+        uint16_t mPort;
+        uint8_t mBuf[1500];
     };
+
 
     class RemoteTxer: public idk::MessageTxer
     {
-    private:
-        NET_DatagramSocket *mSocket;
-        NET_Address *mRemoteAddr;
-        uint16_t mDstPort;
     public:
+        using MessageTxer::sendMsg;
+
         RemoteTxer(const char *hostname, uint16_t dstport);
         ~RemoteTxer();
         virtual bool sendMsg(const void *data, size_t size) override;
+
+    private:
+        const uint32_t mUdpMagic;
+        NET_DatagramSocket *mSocket;
+        NET_Address *mRemoteAddr;
+        uint16_t mDstPort;
+        uint8_t mBuf[1500];
     };
 }
 

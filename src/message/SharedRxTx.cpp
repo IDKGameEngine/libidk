@@ -18,7 +18,7 @@ struct SharedRxTxRegion
 
     std::mutex mutex;
     int64_t status;
-    int64_t tick;
+    uint64_t tick;
     uint8_t data[1500];
 
     SharedRxTxRegion()
@@ -39,15 +39,18 @@ idk::SharedRxer::SharedRxer(const char *label)
 bool idk::SharedRxer::recvMsg(void *buf, size_t bufsz)
 {
     auto *r = (SharedRxTxRegion*)mRegion;
-    std::lock_guard<std::mutex>(r->mutex);
-    if (mTick < r->tick)
+    std::lock_guard<std::mutex> lock(r->mutex);
+
+    if (mTick >= r->tick)
     {
-        mTick = r->tick;
-        IDK_ASSERT(bufsz <= sizeof(r->data), "bufsz too large!");
-        idk_memcpy(buf, r->data, bufsz);
-        return true;
+        return false;
     }
-    return false;
+
+    IDK_ASSERT(bufsz <= sizeof(r->data), "bufsz too large!");
+    idk_memcpy(buf, r->data, bufsz);
+    mTick = r->tick;
+
+    return true;
 }
 
 
@@ -61,10 +64,12 @@ idk::SharedTxer::SharedTxer(const char *label)
 bool idk::SharedTxer::sendMsg(const void *buf, size_t bufsz)
 {
     auto *r = (SharedRxTxRegion*)mRegion;
-    std::lock_guard<std::mutex>(r->mutex);
+    std::lock_guard<std::mutex> lock(r->mutex);
+
     IDK_ASSERT(bufsz <= sizeof(r->data), "bufsz too large!");
     idk_memcpy(r->data, buf, bufsz);
     r->tick += 1;
+
     return true;
 }
 

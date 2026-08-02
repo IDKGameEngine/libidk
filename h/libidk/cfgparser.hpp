@@ -104,6 +104,7 @@ public:
     const char *toStr() const { return getValue(); }
     int32_t toI32() const { return atoi(getValue()); }
     uint16_t toU16() const { return atol(getValue()); }
+    uint32_t toU32() const { return atol(getValue()); }
     uint64_t toU64() const { return atoll(getValue()); }
     double toF64() const { return atof(getValue()); }
 

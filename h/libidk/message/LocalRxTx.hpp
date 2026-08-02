@@ -11,8 +11,8 @@ namespace idk
         virtual bool recvMsg(void *buf, size_t bufsz) override;
 
     private:
-        void *mRegion;
-        int64_t mTick;
+        uint8_t mPort;
+        uint64_t mTick;
     };
 
     class LocalTxer: public idk::MessageTxer
@@ -22,6 +22,6 @@ namespace idk
         virtual bool sendMsg(const void *buf, size_t bufsz) override;
 
     private:
-        void *mRegion;
+        uint8_t mPort;
     };
 }
