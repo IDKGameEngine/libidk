@@ -12,8 +12,6 @@ namespace idk
         uint64_t value;
         char ascii[sizeof(value)];
     
-        // MessagePayloadType(uint64_t v=0): value(v) {  }
-    
         MessagePayloadType(const char *str)
         {
             static constexpr size_t ASCII_STRLEN = sizeof(ascii) - 1;
