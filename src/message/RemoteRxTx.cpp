@@ -46,12 +46,6 @@ bool idk::RemoteRxer::recvMsg(void *dstBuf, size_t dstSize)
         return badRecvMsg(d);
     }
 
-    if (mLastDatagram)
-    {
-        NET_DestroyDatagram(mLastDatagram);
-    }
-    mLastDatagram = d;
-
     idk_memcpy(dstBuf, decoder.getTail(), header.payloadSize);
 
     return goodRecvMsg(d);
@@ -96,7 +90,11 @@ NET_Datagram *idk::RemoteRxer::beginRecvMsg()
 
 bool idk::RemoteRxer::goodRecvMsg(NET_Datagram *d)
 {
-    NET_DestroyDatagram(d);
+    if (mLastDatagram)
+    {
+        NET_DestroyDatagram(mLastDatagram);
+    }
+    mLastDatagram = d;
     return true;
 }
 
