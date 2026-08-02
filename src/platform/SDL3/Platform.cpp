@@ -19,10 +19,9 @@ static void PlatformRaiiFunc()
 {
     namespace fs = std::filesystem;
 
-    SDL_SetAppMetadata("BitchAss", "v0.0.0", "com.mellic03.BitchAss");
+    // SDL_SetAppMetadata("BitchAss", "v0.0.0", "com.mellic03.BitchAss");
     fs::current_path(fs::path(SDL_GetBasePath()) / fs::path(IDK_ASSETS_DIRNAME));
-
-    if (false == SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
         VLOG_FATAL("{}", SDL_GetError());
     }

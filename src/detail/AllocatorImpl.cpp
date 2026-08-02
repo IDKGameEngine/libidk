@@ -18,7 +18,7 @@ void *icd::BumpAllocatorImpl::Alloc(size_t size, size_t a=8)
 {
     uintptr_t addr = (mTail + (a - 1)) & ~(a - 1);
     mTail = addr + size;
-    IDK_ASSERT(mTail <= mEnd, "Out of memory: {} / {} KB", (mTail), mEnd);
+    IDK_ASSERT(mTail <= mEnd, "Out of memory: {} / {} KB", (mTail-mBase)/1024, (mEnd-mBase)/1024);
     return reinterpret_cast<void*>(addr);
 }
 
@@ -31,8 +31,8 @@ void *icd::BumpAllocatorImpl::Calloc(size_t size, size_t a=8)
 }
 
 
-size_t icd::BumpAllocatorImpl::GetSize()
-{
-    return mTail - mBase;
-}
+// size_t icd::BumpAllocatorImpl::GetSize()
+// {
+//     return mTail - mBase;
+// }
 

@@ -56,8 +56,8 @@ void idk::platform::Window::swapWindow()
 
 void idk::platform::Window::showWindow(bool show)
 {
-    if (show) { SDL_HideWindow(mWin); }
-    else      { SDL_ShowWindow(mWin); }
+    if (show) { SDL_ShowWindow(mWin); }
+    else      { SDL_HideWindow(mWin); }
 }
 
 

@@ -29,9 +29,9 @@ namespace idk
         return reinterpret_cast<T*>(ptr);
     }
 
-    static inline float GetAllocatorMemoryUsage()
-    {
-        size_t size = core::getStaticAllocator().GetSize();
-        return float(size) / core::LIBIDK_ALLOCATOR_SIZE;
-    }
+    // static inline float GetAllocatorMemoryUsage()
+    // {
+    //     size_t size = core::getStaticAllocator().GetSize();
+    //     return float(size) / core::LIBIDK_ALLOCATOR_SIZE;
+    // }
 }

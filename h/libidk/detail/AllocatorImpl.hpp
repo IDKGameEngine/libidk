@@ -12,7 +12,7 @@ namespace idk::core::detail
         BumpAllocatorImpl(void *base, size_t size);
         void *Alloc(size_t size, size_t a);
         void *Calloc(size_t size, size_t a);
-        size_t GetSize();
+        // size_t GetSize();
 
     private:
         uintptr_t mBase;
