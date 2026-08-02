@@ -107,13 +107,13 @@ idk::RemoteTxer::RemoteTxer(const char *hostname, uint16_t dstport)
     }
 
     mRemoteAddr = NET_ResolveHostname(hostname);
-    NET_WaitUntilResolved(mRemoteAddr, 5000);
     if (!mRemoteAddr)
     {
         VLOG_FATAL("[RemoteTxer::RemoteTxer] Failure resolving host: {}", SDL_GetError());
     }
+    NET_WaitUntilResolved(mRemoteAddr, 10000);
 
-    if (!(mSocket = NET_CreateDatagramSocket(mRemoteAddr, 0, 0)))
+    if (!(mSocket = NET_CreateDatagramSocket(NULL, 0, 0)))
     {
         VLOG_FATAL("[RemoteTxer::RemoteTxer] Failure creating socket: {}", SDL_GetError());
     }
@@ -128,12 +128,6 @@ idk::RemoteTxer::~RemoteTxer()
 
 bool idk::RemoteTxer::sendMsg(const void *srcBuf, size_t srcSize)
 {
-    if (!mRemoteAddr)
-    {
-        VLOG_WARN("[RemoteTxer::sendmsg] Remote address is NULL");
-        return false;
-    }
-
     // size_t bufsz = 0;
     // bufsz += RemoteRxTxHeader(0xDEADBEBE).serialize(mBuf+bufsz);
     // idk_memcpy(mBuf+bufsz, srcBuf, srcSize);
