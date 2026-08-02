@@ -19,14 +19,17 @@ namespace idk
     {
     public:
         using MessageRxer::recvMsg;
+        using RecvCallback = size_t (*)(void *req, size_t reqsz, void *res);
 
         RemoteRxer(uint16_t port);
         virtual bool recvMsg(void *data, size_t size) override;
+        RecvCallback onRecvMsg = nullptr;
 
     private:
         const uint32_t mAuthToken;
         NET_DatagramSocket *mSocket;
         uint16_t mPort;
+        uint8_t mResBuf[1500];
 
         NET_Datagram *beginRecvMsg();
         bool goodRecvMsg(NET_Datagram*);

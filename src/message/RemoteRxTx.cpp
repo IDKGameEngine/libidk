@@ -44,6 +44,16 @@ bool idk::RemoteRxer::recvMsg(void *dstBuf, size_t dstSize)
     }
 
     idk_memcpy(dstBuf, decoder.getTail(), header.payloadSize);
+
+    if (onRecvMsg)
+    {
+        size_t n = onRecvMsg(dstBuf, header.payloadSize, mResBuf);
+        if (n > 0)
+        {
+            // send response
+        }
+    }
+
     return goodRecvMsg(d);
 }
 
