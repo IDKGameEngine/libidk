@@ -4,6 +4,7 @@
 
 struct NET_DatagramSocket;
 struct NET_Address;
+struct NET_Datagram;
 
 namespace idk
 {
@@ -16,10 +17,16 @@ namespace idk
         virtual bool recvMsg(void *data, size_t size) override;
 
     private:
-        const uint32_t mUdpMagic;
+        const uint32_t mAuthToken;
         NET_DatagramSocket *mSocket;
         uint16_t mPort;
-        uint8_t mBuf[1500];
+        // size_t mHeaderOffset;
+        // size_t mPayloadOffset;
+        uint8_t mBuffer[1500];
+
+        NET_Datagram *beginRecvMsg();
+        bool goodRecvMsg(NET_Datagram*);
+        bool badRecvMsg(NET_Datagram*);
     };
 
 
@@ -33,11 +40,11 @@ namespace idk
         virtual bool sendMsg(const void *data, size_t size) override;
 
     private:
-        const uint32_t mUdpMagic;
+        const uint32_t mAuthToken;
         NET_DatagramSocket *mSocket;
         NET_Address *mRemoteAddr;
         uint16_t mDstPort;
-        uint8_t mBuf[1500];
+        uint8_t mPayload[1500];
     };
 }
 

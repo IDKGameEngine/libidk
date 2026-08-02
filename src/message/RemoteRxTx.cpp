@@ -33,23 +33,23 @@ protected:
 
 struct RemoteRxTxHeader: public Serializable
 {
-    uint32_t magic;
-    uint32_t reserved;
-    RemoteRxTxHeader(uint32_t m=0): magic(m), reserved(0) {  }
+    uint32_t authToken;
+    uint32_t payloadSize;
+    RemoteRxTxHeader(uint32_t auth=0, uint32_t size=0): authToken(auth), payloadSize(size) {  }
 
     virtual size_t serialize(uint8_t *dst) final
     {
         size_t n = 0;
-        n += write(dst+n, magic);
-        n += write(dst+n, reserved);
+        n += write(dst+n, authToken);
+        n += write(dst+n, payloadSize);
         return n;
     }
 
     virtual size_t deserialize(const uint8_t *src) final
     {
         size_t n = 0;
-        n += read(src+n, magic);
-        n += read(src+n, reserved);
+        n += read(src+n, authToken);
+        n += read(src+n, payloadSize);
         return n;
     }
 };
@@ -57,10 +57,9 @@ struct RemoteRxTxHeader: public Serializable
 
 
 idk::RemoteRxer::RemoteRxer(uint16_t port)
-:   mUdpMagic(0xDEADBEBE),
+:   mAuthToken(0xDEADBEBE),
     mPort(port)
 {
-    VLOG_INFO("[RemoteRxer] UDP_MAGIC={}", mUdpMagic);
     if (!NET_Init())
     {
         VLOG_FATAL("[RemoteRxer::RemoteRxer] Failure initializing SDL3_Net: {}", SDL_GetError());
@@ -73,22 +72,56 @@ idk::RemoteRxer::RemoteRxer(uint16_t port)
 }
 
 
-bool idk::RemoteRxer::recvMsg(void *buf, size_t bufsz)
+bool idk::RemoteRxer::recvMsg(void *dstBuf, size_t dstSize)
 {
-    NET_Datagram *dgram = NULL;
-    while (NET_ReceiveDatagram(mSocket, &dgram) && dgram)
+    NET_Datagram *d = beginRecvMsg();
+    if (d == nullptr) { return false; }
+
+    RemoteRxTxHeader header;
+    size_t offset = header.deserialize(mBuffer);
+
+    if (header.authToken != mAuthToken)
     {
-        if (dgram->buflen > static_cast<int>(bufsz))
-        {
-            VLOG_WARN("[RemoteRxer::RemoteRxer] datagram->buflen > bufsz");
-            NET_DestroyDatagram(dgram);
-            continue;
-        }
-        int nbytes = dgram->buflen;
-        idk_memcpy(buf, dgram->buf, nbytes);
-        NET_DestroyDatagram(dgram);
-        return true;
+        return badRecvMsg(d);
     }
+
+    if (header.payloadSize > dstSize)
+    {
+        VLOG_WARN("[RemoteRxer::recvMsg] payloadSize is larger than dstSize");
+        return badRecvMsg(d);
+    }
+
+    idk_memcpy(dstBuf, mBuffer+offset, header.payloadSize);
+    return goodRecvMsg(d);
+}
+
+
+NET_Datagram *idk::RemoteRxer::beginRecvMsg()
+{
+    NET_Datagram *d = nullptr;
+    if (NET_ReceiveDatagram(mSocket, &d) && d)
+    {
+        if (d->buflen > int(sizeof(mBuffer)))
+        {
+            VLOG_WARN("[RemoteRxer::beginRecvMsg] datagram size exceeds maximum allowed");
+            NET_DestroyDatagram(d);
+            return nullptr;
+        }
+        idk_memcpy(mBuffer, d->buf, d->buflen);
+        return d;
+    }
+    return nullptr;
+}
+
+bool idk::RemoteRxer::goodRecvMsg(NET_Datagram *d)
+{
+    NET_DestroyDatagram(d);
+    return true;
+}
+
+bool idk::RemoteRxer::badRecvMsg(NET_Datagram *d)
+{
+    NET_DestroyDatagram(d);
     return false;
 }
 
@@ -97,10 +130,9 @@ bool idk::RemoteRxer::recvMsg(void *buf, size_t bufsz)
 
 
 idk::RemoteTxer::RemoteTxer(const char *hostname, uint16_t dstport)
-:   mUdpMagic(0xDEADBEBE),
+:   mAuthToken(0xDEADBEBE),
     mDstPort(dstport)
 {
-    VLOG_INFO("[RemoteTxer] UDP_MAGIC={}", mUdpMagic);
     if (!NET_Init())
     {
         VLOG_FATAL("[RemoteTxer::RemoteTxer] Failure initializing SDL3_Net: {}", SDL_GetError());
@@ -128,13 +160,13 @@ idk::RemoteTxer::~RemoteTxer()
 
 bool idk::RemoteTxer::sendMsg(const void *srcBuf, size_t srcSize)
 {
-    // size_t bufsz = 0;
-    // bufsz += RemoteRxTxHeader(0xDEADBEBE).serialize(mBuf+bufsz);
-    // idk_memcpy(mBuf+bufsz, srcBuf, srcSize);
-    // bufsz += srcSize;
+    size_t bufsz = 0;
+    bufsz += RemoteRxTxHeader(0xDEADBEBE).serialize(mPayload+bufsz);
+    idk_memcpy(mPayload+bufsz, srcBuf, srcSize);
+    bufsz += srcSize;
 
-    // if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, mBuf, bufsz))
-    if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, srcBuf, srcSize))
+    // if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, srcBuf, srcSize))
+    if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, mPayload, bufsz))
     {
         VLOG_WARN("[RemoteTxer::sendmsg] Failed to send datagram: {}", SDL_GetError());
         return false;
