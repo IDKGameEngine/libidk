@@ -4,6 +4,23 @@
 
 namespace idk
 {
+    namespace LocalRxTx
+    {
+        static constexpr size_t MAX_PAYLOAD_SIZE = 1024;
+
+        struct PayloadBuffer
+        {
+            uint8_t data[LocalRxTx::MAX_PAYLOAD_SIZE];
+        };
+
+        struct MessageBuffer
+        {
+            MessageHeader header;
+            PayloadBuffer payload;
+        };
+    }
+
+
     class LocalRxer: public idk::MessageRxer
     {
     public:
@@ -11,9 +28,17 @@ namespace idk
         virtual MessageRecvInfo *recvMsg() override;
 
     private:
-        uint8_t mPort;
-        uint64_t mTick;
+        using PayloadBufType = LocalRxTx::PayloadBuffer;
+        using MessageBufType = LocalRxTx::MessageBuffer;
+
+        uint8_t         mPort;
+        uint64_t        mTick;
+        MessageHeader  &mHeader;
+        PayloadBufType &mPayload;
+        MessageBufType  mMsgBuf;
+        MessageRecvInfo mRecvInfo;
     };
+
 
     class LocalTxer: public idk::MessageTxer
     {
