@@ -28,4 +28,10 @@ namespace idk
         void *ptr = core::getStaticAllocator().Alloc(count*sizeof(T), alignof(T));
         return reinterpret_cast<T*>(ptr);
     }
+
+    static inline float GetAllocatorMemoryUsage()
+    {
+        size_t size = core::getStaticAllocator().GetSize();
+        return float(size) / core::LIBIDK_ALLOCATOR_SIZE;
+    }
 }

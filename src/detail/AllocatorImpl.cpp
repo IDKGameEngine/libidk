@@ -30,3 +30,9 @@ void *icd::BumpAllocatorImpl::Calloc(size_t size, size_t a=8)
     return ptr;
 }
 
+
+size_t icd::BumpAllocatorImpl::GetSize()
+{
+    return mTail - mBase;
+}
+
