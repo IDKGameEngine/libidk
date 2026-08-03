@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "libidk/assert.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 
 namespace idk

@@ -1,10 +1,10 @@
 // #include "libidk/message/SharedRxTx.hpp"
 
-// #include "libidk/assert.hpp"
+// #include "libidk/Assert.hpp"
 // #include "libidk/log.hpp"
 // #include "libidk/SharedMemory.hpp"
-// #include "libidk/stdmem.hpp"
-// #include "libidk/stdstr.hpp"
+// #include "libidk/StdMem.hpp"
+// #include "libidk/StdStr.hpp"
 
 // #include <mutex>
 

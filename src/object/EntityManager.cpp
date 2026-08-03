@@ -1,6 +1,6 @@
 #include "libidk/object/EntityManager.hpp"
 #include "libidk/New.hpp"
-#include "libidk/stdmem.hpp"
+#include "libidk/StdMem.hpp"
 
 
 idk::EntityManager::EntityManager(int32_t maxEntities)

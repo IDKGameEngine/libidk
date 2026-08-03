@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Allocator.hpp"
-#include "libidk/assert.hpp"
+#include "libidk/Assert.hpp"
 
 namespace idk
 {

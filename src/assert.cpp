@@ -1,4 +1,4 @@
-#include "libidk/assert.hpp"
+#include "libidk/Assert.hpp"
 #include <cassert>
 #include <cstdarg>
 #include <cstdio>

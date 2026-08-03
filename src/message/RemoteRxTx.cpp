@@ -3,8 +3,8 @@
 #include "libidk/message/RemoteRxTx.hpp"
 #include "libidk/Serialize.hpp"
 
-#include "libidk/stdmem.hpp"
-#include "libidk/stdstr.hpp"
+#include "libidk/StdMem.hpp"
+#include "libidk/StdStr.hpp"
 #include "libidk/math.hpp"
 #include "libidk/log.hpp"
 
@@ -241,7 +241,12 @@ bool idk::RemoteRxTxer::sendMsg(const void *srcBuf, size_t srcSize, MessagePaylo
 {
     if (srcSize > sizeof(mPayload))
     {
-        VLOG_WARN("[RemoteRxTxer::sendMsg] Failed to send message: srcSize too large");
+        VLOG_WARN("[RemoteRxTxer::sendMsg] Failure sending message: srcSize too large");
+        return false;
+    }
+
+    if (!mRemoteAddr)
+    {
         return false;
     }
 
@@ -251,9 +256,10 @@ bool idk::RemoteRxTxer::sendMsg(const void *srcBuf, size_t srcSize, MessagePaylo
 
     if (!NET_SendDatagram(mSocket, mRemoteAddr, mPort, &mMsgBuf, mHeader.messageSize))
     {
-        VLOG_WARN("[RemoteRxTxer::sendmsg] Failed to send datagram: {}", SDL_GetError());
+        VLOG_WARN("[RemoteRxTxer::sendmsg] Failure sending datagram: {}", SDL_GetError());
         return false;
     }
+
     return true;
 }
 

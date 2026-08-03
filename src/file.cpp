@@ -1,5 +1,5 @@
 #include "libidk/file.hpp"
-#include "libidk/assert.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 
 #include <cstring>

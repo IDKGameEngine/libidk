@@ -1,8 +1,8 @@
 #include "libidk/message/LocalRxTx.hpp"
 #include "libidk/New.hpp"
 #include "libidk/Serialize.hpp"
-#include "libidk/stdmem.hpp"
-#include "libidk/assert.hpp"
+#include "libidk/StdMem.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 
 #include <mutex>

@@ -1,7 +1,7 @@
 #include "libidk/Service.hpp"
 #include "libidk/Engine.hpp"
-#include "libidk/stdmem.hpp"
-#include "libidk/stdstr.hpp"
+#include "libidk/StdMem.hpp"
+#include "libidk/StdStr.hpp"
 #include "libidk/log.hpp"
 
 static void ServiceRaiiFunc(const char **name)

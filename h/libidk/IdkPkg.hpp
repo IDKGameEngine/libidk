@@ -1,9 +1,9 @@
 #pragma once
 
 #include "libidk/Types.hpp"
-#include "libidk/assert.hpp"
-#include "libidk/stdstr.hpp"
-#include "libidk/stdmem.hpp"
+#include "libidk/Assert.hpp"
+#include "libidk/StdStr.hpp"
+#include "libidk/StdMem.hpp"
 #include "libidk/Memory.hpp"
 #include "libidk/Tuple.hpp"
 

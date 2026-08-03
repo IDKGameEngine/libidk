@@ -1,7 +1,7 @@
 #include "libidk/SharedMemory.hpp"
-#include "libidk/assert.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
-#include "libidk/stdstr.hpp"
+#include "libidk/StdStr.hpp"
 
 #ifdef __linux__
     #include <sys/mman.h> // shm_open, mmap

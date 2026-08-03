@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libidk/assert.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 #include "libidk/Types.hpp"
 #include <cstdint>

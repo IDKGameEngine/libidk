@@ -2,8 +2,8 @@
 
 // #include "libidk/message/UdpMessage.hpp"
 
-// #include "libidk/stdmem.hpp"
-// #include "libidk/stdstr.hpp"
+// #include "libidk/StdMem.hpp"
+// #include "libidk/StdStr.hpp"
 // #include "libidk/math.hpp"
 // #include "libidk/log.hpp"
 
