@@ -93,6 +93,13 @@ idk::SDL3Video::~SDL3Video()
 }
 
 
+void idk::SDL3Video::update(PlatformContext &ctx)
+{
+    (void)ctx;
+    SDL_GL_SwapWindow((SDL_Window*)mWin);
+}
+
+
 void idk::SDL3Video::setWindowVisibility(bool visible)
 {
     if (visible) { SDL_ShowWindow((SDL_Window*)mWin); }

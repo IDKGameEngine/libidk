@@ -12,11 +12,11 @@ namespace idk
     {
     private:
         T  *mData;
-        int mTop;
-        int mEnd;
+        size_t mTop;
+        size_t mEnd;
 
     public:
-        List(T *buf, int size): mData(buf), mTop(0), mEnd(size) {  }
+        List(T *buf, size_t size): mData(buf), mTop(0), mEnd(size) {  }
 
         void push(const T &value)
         {
@@ -57,8 +57,8 @@ namespace idk
         void *data() { return mData; }
         const void *data() const { return mData; }
 
-        int size()       { return mTop; }
-        int size() const { return mTop; }
+        size_t size()       { return mTop; }
+        size_t size() const { return mTop; }
 
         bool empty()       { return (mTop == 0); }
         bool empty() const { return (mTop == 0); }
@@ -79,7 +79,7 @@ namespace idk
         };
 
         Iterator begin() { return Iterator(mData); }
-        Iterator end()   { return Iterator(mData + mEnd); }
+        Iterator end()   { return Iterator(mData + mTop); }
     };
 
 
@@ -90,7 +90,7 @@ namespace idk
         T mBuf[MaxSize];
 
     public:
-        InplaceList(): idk::List<T>(&mBuf, int(MaxSize)) {  };
+        InplaceList(): idk::List<T>(mBuf, int(MaxSize)) {  };
 
     };
 

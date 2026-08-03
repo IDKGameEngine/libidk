@@ -10,8 +10,6 @@ namespace idk
     private:
 
     public:
-        SDL3Time();
-
         virtual uint64_t getSysTimeMs() final;
         virtual uint64_t getSysTimeNs() final;
 

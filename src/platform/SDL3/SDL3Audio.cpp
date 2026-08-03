@@ -16,6 +16,6 @@ idk::SDL3Audio::SDL3Audio()
 
 void idk::SDL3Audio::update(PlatformContext &ctx)
 {
-
+    (void)ctx;
 }
 

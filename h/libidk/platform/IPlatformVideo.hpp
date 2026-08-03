@@ -10,8 +10,6 @@ namespace idk
     private:
 
     public:
-        IPlatformVideo() {  };
-
         virtual void *getImpl() = 0;
         virtual int   getWidth() = 0;
         virtual int   getHeight() = 0;

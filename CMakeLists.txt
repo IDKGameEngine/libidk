@@ -35,7 +35,7 @@ target_sources(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/file.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/log.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/New.cpp"
-    # "${CMAKE_CURRENT_SOURCE_DIR}/src/Service.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/Service.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SharedMemory.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/transform.cpp"
 )

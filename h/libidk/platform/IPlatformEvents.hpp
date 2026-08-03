@@ -12,15 +12,18 @@ namespace idk
     protected:
         static constexpr size_t MAX_CALLBACKS = 64;
         using EventCallback = void (*)(IPlatformEvents*, void *event);
-        InplaceList<EventCallback, MAX_CALLBACKS> mEventFuncs;
+        idk::InplaceList<uintptr_t, MAX_CALLBACKS> mEventFuncs;
 
     public:
-        IPlatformEvents() {  };
 
         bool addEventCallback(EventCallback func)
         {
-            if (mEventFuncs.full()) { return false; }
-            mEventFuncs.push(func);
+            if (!mEventFuncs.full())
+            {
+                mEventFuncs.push(reinterpret_cast<uintptr_t>(func));
+                return true;
+            }
+            return false;
         }
 
     };
