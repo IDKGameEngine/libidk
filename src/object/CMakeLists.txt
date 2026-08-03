@@ -1,5 +1,4 @@
 target_sources(
     ${PROJECT_NAME} PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/AppObject.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/EntityManager.cpp"
 )

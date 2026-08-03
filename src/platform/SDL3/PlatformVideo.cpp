@@ -1,4 +1,4 @@
-#include "libidk/platform/Window.hpp"
+#include "libidk/platform/IPlatformVideo.hpp"
 #include "libidk/log.hpp"
 
 #include <glad/glad.h>
@@ -6,7 +6,51 @@
 #include <SDL3/SDL.h>
 
 
-idk::platform::Window::Window(const char *title, int w, int h)
+static void PlatformVideoRaiiFunc()
+{
+    if (false == SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    {
+        VLOG_FATAL("{}", SDL_GetError());
+    }
+
+    if (!SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE))
+    {
+        VLOG_ERROR("{}", SDL_GetError());
+    }
+
+    if (!SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4))
+    {
+        VLOG_ERROR("{}", SDL_GetError());
+    }
+
+    if (!SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6))
+    {
+        VLOG_ERROR("{}", SDL_GetError());
+    }
+
+    if (!SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4))
+    {
+        VLOG_ERROR("{}", SDL_GetError());
+    }
+
+    if (!SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1))
+    {
+        VLOG_ERROR("{}", SDL_GetError());
+    }
+
+    if (!SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  24))
+    {
+        VLOG_ERROR("{}", SDL_GetError());
+    }
+
+    if (!SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8))
+    {
+        VLOG_ERROR("{}", SDL_GetError());
+    }
+}
+
+
+idk::PlatformVideo::PlatformVideo(const char *title, int w, int h)
 :   mTitle(title),
     mWin(nullptr),
     mWidth(w),

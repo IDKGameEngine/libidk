@@ -1,7 +1,29 @@
 #pragma once
 
-#include "libidk/Types.hpp"
+#include "libidk/platform/IPlatformVideo.hpp"
+#include "Platform.hpp"
+
 struct SDL_Window;
+
+
+class idk::PlatformVideo: public idk::IPlatformVideo
+{
+private:
+    const char *mTitle;
+    SDL_Window *mWin;
+    void       *mGlCtx;
+    int32_t     mWidth;
+    int32_t     mHeight;
+
+public:
+    PlatformVideo(const char *title, int w, int h);
+    
+    virtual int getWidth()  const final { return mWidth; }
+    virtual int getHeight() const final { return mHeight; }
+
+};
+
+
 
 namespace idk::platform
 {
