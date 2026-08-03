@@ -1,9 +1,7 @@
 #pragma once
 
-#include "libidk/platform/IPlatformTime.hpp"
-#include "libidk/math.hpp"
-#include "libidk/metric.hpp"
-#include "libidk/log.hpp"
+#include "libidk/Types.hpp"
+#include "libidk/platform/IPlatform.hpp"
 
 
 namespace idk
@@ -15,40 +13,12 @@ namespace idk
         IPlatformTime *mTime;
         uint64_t periodNs_;
         uint64_t startTimeNs_;
-
-        PeriodicTimer(IPlatformTime *p, uint64_t rateHz = 1000000000)
-        :   mTime(p), periodNs_(0), startTimeNs_(mTime->getSysTimeNs())
-        {
-            setRateHz(rateHz);
-        }
+        PeriodicTimer(IPlatformTime*, uint64_t rateHz);
 
     public:
-        bool expired()
-        {
-            uint64_t currTimeNs = mTime->getSysTimeNs();
-            if ((currTimeNs - startTimeNs_) >= periodNs_)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        void reset()
-        {
-            startTimeNs_ = mTime->getSysTimeNs();
-        }
-    
-        void setRateHz(uint64_t rateHz)
-        {
-            periodNs_ = 1000000000 / rateHz;
-        }
-
-        float getExpiryAlpha()
-        {
-            uint64_t currTimeNs = mTime->getSysTimeNs();
-            float alpha = float(currTimeNs - startTimeNs_) / float(periodNs_);
-            return idk::clamp(alpha, 0.0f, 1.0f);
-        }
+        bool expired();
+        void reset();
+        void setRateHz(uint64_t rateHz);
 
         template <typename T> T getPeriodNs() { return static_cast<T>(periodNs_); }
         template <typename T> T getPeriodUs() { return static_cast<T>(periodNs_) / T(1000); }
@@ -57,18 +27,3 @@ namespace idk
     };
 }
 
-// bool idk::MSecTimer::expired()
-// {
-//     uint64_t curr, delta;
-
-//     curr = SDL_GetTicks();
-//     delta = (curr - prev_);
-
-//     if (delta >= step_msec_)
-//     {
-//         prev_ = curr;
-//         return true;
-//     }
-
-//     return false;
-// }

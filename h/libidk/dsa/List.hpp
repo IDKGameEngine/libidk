@@ -78,8 +78,8 @@ namespace idk
             T &operator*() { return *mPtr; };
         };
 
-        Iterator begin() { return Iterator(mBase); }
-        Iterator end()   { return Iterator(mTail); }
+        Iterator begin() { return Iterator(mData); }
+        Iterator end()   { return Iterator(mData + mEnd); }
     };
 
 
@@ -90,7 +90,7 @@ namespace idk
         T mBuf[MaxSize];
 
     public:
-        InplaceList(): idk::List<T>(&mBuf, MaxSize) {  };
+        InplaceList(): idk::List<T>(&mBuf, int(MaxSize)) {  };
 
     };
 

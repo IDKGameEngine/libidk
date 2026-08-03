@@ -2,6 +2,7 @@
 
 #include "libidk/Types.hpp"
 #include "libidk/dsa/List.hpp"
+#include "libidk/New.hpp"
 #include <atomic>
 
 
@@ -26,38 +27,53 @@ namespace idk
     {
     private:
         std::atomic<bool> mRunning;
-        idk::InplaceList<IPlatformFeature*, 16> mFeatures;
-        
+        size_t            mNumFeatures;
+        IPlatformFeature *mFeatures[16];
+        // idk::InplaceList<IPlatformFeature*, 16> mFeatures;
+
     public:
-        PlatformContext(): mRunning{true} {  }
+        PlatformContext()
+        :   mRunning{true}, mNumFeatures(0)
+        { 
+
+        }
 
         bool running()  { return mRunning.load(); }
         void shutdown() { mRunning.store(false); }
 
         void update()
         {
-            for (auto *feature: mFeatures)
+            for (size_t i=0; i<mNumFeatures; i++)
             {
-                feature->update(*this);
+                mFeatures[i]->update(*this);
             }
         }
 
 
-        template <typename FeatureType>
-        static PlatformContext BuildPlatformContext()
+        template <typename FeatureType, typename... Args>
+        FeatureType *giveFeature(Args&&... args)
         {
-            PlatformContext ctx;
-            mFeatures.push(new FeatureType());
-            return ctx;
+            IDK_ASSERT(mNumFeatures < 16, "[PlatformContext::giveFeature] mFeatures overflow");
+            FeatureType *p = idk::New<FeatureType>(args...);
+            mFeatures[mNumFeatures++] = p;
+            return p;
         }
 
-        template <typename FeatureType, typename... Args>
-        static PlatformContext BuildPlatformContext()
-        {
-            PlatformContext ctx = BuildPlatformContext<Args...>();
-            ctx.mFeatures.push(new FeatureType());
-            return ctx;
-        }
+        // template <typename FeatureType>
+        // static PlatformContext MakeCtx()
+        // {
+        //     PlatformContext ctx;
+        //     mFeatures.push(new FeatureType());
+        //     return ctx;
+        // }
+
+        // template <typename FeatureType, typename... Args>
+        // static PlatformContext MakeCtx()
+        // {
+        //     PlatformContext ctx = MakeCtx<Args...>();
+        //     ctx.mFeatures.push(new FeatureType());
+        //     return ctx;
+        // }
     };
 
 }
