@@ -1,20 +1,19 @@
 #pragma once
 
-#include "IPlatformFeature.hpp"
+#include "libidk/platform/IPlatformTime.hpp"
 
 
 namespace idk
 {
-    class PlatformTime: public IPlatformFeature
+    class SDL3Time: public IPlatformTime
     {
     private:
 
     public:
-        PlatformTime(): IPlatformFeature("PlatformTime") {  }
-        virtual void update(PlatformContext&) final {  }
+        SDL3Time();
 
-        static uint64_t GetSysTimeMs();
-        static uint64_t GetSysTimeNs();
+        virtual uint64_t getSysTimeMs() final;
+        virtual uint64_t getSysTimeNs() final;
 
     };
 }

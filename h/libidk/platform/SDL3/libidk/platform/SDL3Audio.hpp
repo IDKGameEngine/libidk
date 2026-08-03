@@ -1,16 +1,16 @@
 #pragma once
 
-#include "IPlatformFeature.hpp"
+#include "libidk/platform/IPlatformAudio.hpp"
 
 
 namespace idk
 {
-    class PlatformAudio: public IPlatformFeature
+    class SDL3Audio: public IPlatformAudio
     {
     private:
         
     public:
-        PlatformAudio(): IPlatformFeature("PlatformAudio") {  }
+        SDL3Audio();
         virtual void update(PlatformContext&) final;
 
     };

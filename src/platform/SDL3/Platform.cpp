@@ -1,4 +1,4 @@
-#include "libidk/platform/Platform.hpp"
+#include "libidk/platform/IPlatform.hpp"
 #include "libidk/log.hpp"
 
 #include <SDL3/SDL.h>

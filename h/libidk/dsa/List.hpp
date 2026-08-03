@@ -65,6 +65,21 @@ namespace idk
 
         bool full()        { return (mTop == mEnd); }
         bool full()  const { return (mTop == mEnd); }
+
+        struct Iterator
+        {
+            T *mPtr;
+            Iterator(T *ptr): mPtr(ptr) {  }
+            Iterator(const Iterator &I): mPtr(I.mPtr) {  }
+            Iterator &operator++() { mPtr += 1; return *this; }
+            Iterator operator++(int) { return Iterator(mPtr + 1); }
+            bool operator==(const Iterator &rhs) { return mPtr == rhs.mPtr; }
+            bool operator!=(const Iterator &rhs) { return mPtr != rhs.mPtr; }
+            T &operator*() { return *mPtr; };
+        };
+
+        Iterator begin() { return Iterator(mBase); }
+        Iterator end()   { return Iterator(mTail); }
     };
 
 

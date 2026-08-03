@@ -18,9 +18,6 @@ target_compile_options(
 )
 target_link_libraries(
     ${PROJECT_NAME} PUBLIC
-    glad
-    SDL3::SDL3-shared
-    SDL3_image::SDL3_image
     SDL3_net::SDL3_net
     glm::glm-header-only
 )
@@ -40,10 +37,10 @@ target_sources(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/New.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Service.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SharedMemory.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/threadpool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/transform.cpp"
 )
 
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/dsa")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/object")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform/${IDK_PLATFORM}")

@@ -2,8 +2,8 @@
 
 #include "libidk/Types.hpp"
 #include "libidk/cfgparser.hpp"
-#include "libidk/Timer.hpp"
-#include "libidk/raii.hpp"
+#include "libidk/dsa/PeriodicTimer.hpp"
+#include "libidk/dsa/Raii.hpp"
 #include <vector>
 
 namespace idk

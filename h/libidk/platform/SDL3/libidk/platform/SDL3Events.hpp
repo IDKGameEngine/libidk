@@ -1,16 +1,16 @@
 #pragma once
 
-#include "IPlatformFeature.hpp"
+#include "libidk/platform/IPlatformEvents.hpp"
 
 
 namespace idk
 {
-    class PlatformEvents: public IPlatformFeature
+    class SDL3Events: public IPlatformEvents
     {
     private:
 
     public:
-        PlatformEvents(): IPlatformFeature("PlatformEvents") {  }
+        SDL3Events();
         virtual void update(PlatformContext&) final;
 
     };

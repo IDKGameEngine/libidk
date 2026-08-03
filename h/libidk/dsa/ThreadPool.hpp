@@ -10,7 +10,7 @@
 
 #include "libidk/Types.hpp"
 #include "libidk/metric.hpp"
-#include "libidk/queue.hpp"
+#include "libidk/dsa/Queue.hpp"
 
 namespace idk::core
 {

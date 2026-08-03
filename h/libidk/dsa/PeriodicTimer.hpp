@@ -1,32 +1,31 @@
 #pragma once
 
-#include "libidk/platform/Platform.hpp"
+#include "libidk/platform/IPlatformTime.hpp"
 #include "libidk/math.hpp"
 #include "libidk/metric.hpp"
 #include "libidk/log.hpp"
 
+
 namespace idk
 {
-    class IEngine;
-
-
     class PeriodicTimer
     {
     private:
+        friend class IPlatformTime;
+        IPlatformTime *mTime;
         uint64_t periodNs_;
         uint64_t startTimeNs_;
 
-    public:
-        PeriodicTimer(uint64_t rateHz = 1000000000)
-        :   periodNs_(0),
-            startTimeNs_(platform::getSysTimeNs())
+        PeriodicTimer(IPlatformTime *p, uint64_t rateHz = 1000000000)
+        :   mTime(p), periodNs_(0), startTimeNs_(mTime->getSysTimeNs())
         {
             setRateHz(rateHz);
         }
 
+    public:
         bool expired()
         {
-            uint64_t currTimeNs = platform::getSysTimeNs();
+            uint64_t currTimeNs = mTime->getSysTimeNs();
             if ((currTimeNs - startTimeNs_) >= periodNs_)
             {
                 return true;
@@ -36,7 +35,7 @@ namespace idk
 
         void reset()
         {
-            startTimeNs_ = platform::getSysTimeNs();
+            startTimeNs_ = mTime->getSysTimeNs();
         }
     
         void setRateHz(uint64_t rateHz)
@@ -46,7 +45,7 @@ namespace idk
 
         float getExpiryAlpha()
         {
-            uint64_t currTimeNs = platform::getSysTimeNs();
+            uint64_t currTimeNs = mTime->getSysTimeNs();
             float alpha = float(currTimeNs - startTimeNs_) / float(periodNs_);
             return idk::clamp(alpha, 0.0f, 1.0f);
         }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libidk/Types.hpp"
-#include "libidk/Stack.hpp"
+#include "libidk/dsa/Stack.hpp"
 
 
 namespace idk

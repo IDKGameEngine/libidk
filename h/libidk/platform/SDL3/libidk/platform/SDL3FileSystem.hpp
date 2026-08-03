@@ -1,17 +1,16 @@
 #pragma once
 
-#include "libidk/platform/PlatformFileSystem.hpp"
+#include "libidk/platform/IPlatformFileSystem.hpp"
 
 
 namespace idk
 {
-    class SDL3FileSystem: public PlatformFileSystem
+    class SDL3FileSystem: public IPlatformFileSystem
     {
     private:
         
     public:
         SDL3FileSystem();
-        virtual void update(PlatformContext&) final;
 
     };
 }

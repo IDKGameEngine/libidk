@@ -1,20 +1,33 @@
 #pragma once
 
-#include "IPlatformFeature.hpp"
+#include "libidk/platform/IPlatformVideo.hpp"
 
 
 namespace idk
 {
-    class PlatformVideo: public IPlatformFeature
+    class SDL3Video: public IPlatformVideo
     {
     private:
+        const char      *mTitle;
+        void            *mWin;
+        void            *mGl;
+        int32_t          mWidth;
+        int32_t          mHeight;
 
     public:
-        PlatformVideo(): IPlatformFeature("PlatformVideo") {  }
+        SDL3Video(const char *title, int w, int h);
+        ~SDL3Video();
 
-        virtual void update(PlatformContext&) final;
-        virtual int getWidth() const = 0;
-        virtual int getHeight() const = 0;
+        virtual void  update(PlatformContext&) final;
+
+        virtual void *getImpl()   final { return mWin; }
+        virtual int   getWidth()  final { return mWidth; };
+        virtual int   getHeight() final { return mHeight; };
+
+        virtual void  setWindowVisibility(bool visible) final;
+        virtual void  setWindowResolution(int w, int h) final;
+        virtual void  setRenderResolution(int w, int h) final;
 
     };
 }
+

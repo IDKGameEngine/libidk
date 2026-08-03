@@ -1,4 +1,4 @@
-#include "libidk/platform/IPlatformVideo.hpp"
+#include "libidk/platform/SDL3Video.hpp"
 #include "libidk/log.hpp"
 
 #include <glad/glad.h>
@@ -6,9 +6,14 @@
 #include <SDL3/SDL.h>
 
 
-static void PlatformVideoRaiiFunc()
+idk::SDL3Video::SDL3Video(const char *title, int w, int h)
+:   mTitle(title),
+    mWin(nullptr),
+    mGl(nullptr),
+    mWidth(w),
+    mHeight(h)
 {
-    if (false == SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    if (false == SDL_Init(SDL_INIT_VIDEO))
     {
         VLOG_FATAL("{}", SDL_GetError());
     }
@@ -47,23 +52,13 @@ static void PlatformVideoRaiiFunc()
     {
         VLOG_ERROR("{}", SDL_GetError());
     }
-}
-
-
-idk::PlatformVideo::PlatformVideo(const char *title, int w, int h)
-:   mTitle(title),
-    mWin(nullptr),
-    mWidth(w),
-    mHeight(h)
-{
-    VLOG_INFO("[Window::Window]");
 
     if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, SDL_WINDOW_OPENGL)))
     {
         VLOG_FATAL("SDL_CreateWindow: {}", SDL_GetError());
     }
 
-    if (!(mGlCtx = SDL_GL_CreateContext(mWin)))
+    if (!(mGl = SDL_GL_CreateContext((SDL_Window*)mWin)))
     {
         VLOG_FATAL("SDL_GL_CreateContext: {}", SDL_GetError());
     }
@@ -87,44 +82,31 @@ idk::PlatformVideo::PlatformVideo(const char *title, int w, int h)
     {
         VLOG_FATAL("gladLoadGLLoader failure");
     }
-
 }
 
 
-idk::platform::Window::~Window()
+idk::SDL3Video::~SDL3Video()
 {
-    SDL_GL_DestroyContext((SDL_GLContext)mGlCtx);
-    SDL_DestroyWindow(mWin);
+    SDL_GL_DestroyContext((SDL_GLContext)mGl);
+    SDL_DestroyWindow((SDL_Window*)mWin);
     SDL_Quit();
 }
 
 
-void idk::platform::Window::makeCurrent()
+void idk::SDL3Video::setWindowVisibility(bool visible)
 {
-    SDL_GL_MakeCurrent(mWin, (SDL_GLContext)mGlCtx);
+    if (visible) { SDL_ShowWindow((SDL_Window*)mWin); }
+    else         { SDL_HideWindow((SDL_Window*)mWin); }
 }
 
 
-void idk::platform::Window::swapWindow()
+void idk::SDL3Video::setWindowResolution(int w, int h)
 {
-    SDL_GL_SwapWindow(mWin);
+    SDL_SetWindowSize((SDL_Window*)mWin, w, h);
 }
 
 
-void idk::platform::Window::showWindow(bool show)
-{
-    if (show) { SDL_ShowWindow(mWin); }
-    else      { SDL_HideWindow(mWin); }
-}
-
-
-void idk::platform::Window::setWindowResolution(int w, int h)
-{
-    SDL_SetWindowSize(mWin, w, h);
-}
-
-
-void idk::platform::Window::setRenderResolution(int w, int h)
+void idk::SDL3Video::setRenderResolution(int w, int h)
 {
     (void)w;
     (void)h;

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "IPlatformFeature.hpp"
+#include "libidk/platform/IPlatformInput.hpp"
 
 
 namespace idk
 {
-    class PlatformInput: public IPlatformFeature
+    class SDL3Input: public IPlatformInput
     {
     private:
 
     public:
-        PlatformInput(): IPlatformFeature("PlatformInput") {  }
+        SDL3Input();
         virtual void update(PlatformContext&) final;
 
     };

@@ -1,7 +1,7 @@
 #include <SDL3_net/SDL_net.h>
 
 #include "libidk/message/RemoteRxTx.hpp"
-#include "libidk/Serialize.hpp"
+#include "libidk/dsa/Serialize.hpp"
 
 #include "libidk/StdMem.hpp"
 #include "libidk/StdStr.hpp"
