@@ -1,0 +1,82 @@
+#pragma once
+
+#include "libidk/Assert.hpp"
+#include "libidk/log.hpp"
+#include "libidk/Types.hpp"
+#include <cstdint>
+
+namespace idk
+{
+    template <typename T>
+    class List: public idk::Immobile
+    {
+    private:
+        T  *mData;
+        int mTop;
+        int mEnd;
+
+    public:
+        List(T *buf, int size): mData(buf), mTop(0), mEnd(size) {  }
+
+        void push(const T &value)
+        {
+            IDK_ASSERT(mTop < mEnd, "[idk::List] Buffer overflow");
+            new (&mData[mTop++]) T(value);
+        }
+
+        void pop()
+        {
+            IDK_ASSERT(mTop > 0, "[idk::List] Buffer underflow");
+            mData[--mTop].~T();
+        }
+
+        T &front()
+        {
+            IDK_ASSERT(mTop > 0, "[idk::List] Buffer empty");
+            return mData[0];
+        }
+
+        T &back()
+        {
+            IDK_ASSERT(mTop > 0, "[idk::List] Buffer empty");
+            return mData[mTop-1];
+        }
+
+        T &operator[](size_t idx)
+        {
+            IDK_ASSERT(0<=idx && idx<mEnd, "[idk::List] Index out of bounds");
+            return mData[idx];
+        }
+
+        const T &operator[](size_t idx) const
+        {
+            IDK_ASSERT(0<=idx && idx<mEnd, "[idk::List] Index out of bounds");
+            return mData[idx];
+        }
+
+        void *data() { return mData; }
+        const void *data() const { return mData; }
+
+        int size()       { return mTop; }
+        int size() const { return mTop; }
+
+        bool empty()       { return (mTop == 0); }
+        bool empty() const { return (mTop == 0); }
+
+        bool full()        { return (mTop == mEnd); }
+        bool full()  const { return (mTop == mEnd); }
+    };
+
+
+    template <typename T, uint32_t MaxSize>
+    class InplaceList: public idk::List<T>
+    {
+    private:
+        T mBuf[MaxSize];
+
+    public:
+        InplaceList(): idk::List<T>(&mBuf, MaxSize) {  };
+
+    };
+
+}
