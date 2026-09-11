@@ -4,19 +4,23 @@
 #include "libidk/StdStr.hpp"
 #include "libidk/log.hpp"
 
-static void ServiceRaiiFunc(const char **name)
+void idk::core::Service::raiiFunc_(Service &srv, const char **name)
 {
-    static char filepath[256];
-    idk_memset(filepath, '\0', sizeof(filepath));
-    snprintf(filepath, sizeof(filepath), "%s.cfg", *name);
-    idk::IEngine::getCfgParser().load(filepath);
+    idk_strncpy(&(srv.mName[0]), *name, MAX_NAME_LENGTH-1);
+    srv.mName[MAX_NAME_LENGTH - 1] = '\0';
+
+    static idk::StringType<MAX_NAME_LENGTH + sizeof(".cfg")> cfgpath;
+    idk_memset(cfgpath, '\0', sizeof(cfgpath));
+    snprintf(cfgpath, sizeof(cfgpath), "%s.cfg", *name);
+
+    srv.mCfgParser.load(cfgpath);
 }
 
 idk::core::Service::Service(const char *name, idk::IdType typeId)
-:   mRaii(ServiceRaiiFunc, &name),
-    mTypeId(typeId),
-    mCfg(IEngine::getCfgParser()[name])
+:   mTypeId(typeId),
+    mCfgParser(),
+    mRaii(Service::raiiFunc_, *this, &name),
+    mCfg(mCfgParser[name])
 {
-    idk_strncpy(&mName[0], name, MAX_NAME_LENGTH-1);
-    mName[MAX_NAME_LENGTH - 1] = '\0';
+
 }

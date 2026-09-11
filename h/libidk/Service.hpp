@@ -14,9 +14,11 @@ namespace idk::core
     {
     private:
         static constexpr size_t MAX_NAME_LENGTH = 64;
-        RaiiFunc<void(const char**)> mRaii;
         const idk::IdType mTypeId;
-        char mName[MAX_NAME_LENGTH];
+        idk::CfgParser mCfgParser;
+        idk::StringType<MAX_NAME_LENGTH> mName;
+        RaiiFunc<void(Service&, const char**)> mRaii;
+        static void raiiFunc_(idk::core::Service &srv, const char **name);
 
     protected:
         const CfgParser::TreeNode &mCfg;

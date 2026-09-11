@@ -97,6 +97,12 @@ CfgParser::CfgParser()
 
 }
 
+CfgParser::CfgParser(const char *path)
+:   CfgParser()
+{
+    this->load(path);
+}
+
 void CfgParser::load(const char *path)
 {
     mBuf.clear();

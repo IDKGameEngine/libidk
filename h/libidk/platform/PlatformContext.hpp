@@ -38,8 +38,15 @@ namespace idk
 
         }
 
-        bool running()  { return mRunning.load(); }
-        void shutdown() { mRunning.store(false); }
+        bool running()
+        {
+            return mRunning.load();
+        }
+
+        void shutdown()
+        {
+            mRunning.store(false);
+        }
 
         void update()
         {
@@ -48,7 +55,6 @@ namespace idk
                 mFeatures[i]->update(*this);
             }
         }
-
 
         template <typename FeatureType, typename... Args>
         FeatureType *giveFeature(Args&&... args)

@@ -9,6 +9,18 @@ namespace idk
     using IdType = int64_t;
     static constexpr IdType ID_INVALID = -1;
 
+    template <typename T, size_t N>
+    using ArrayType = T[N];
+
+    template <typename T, size_t N>
+    using ArrayRef = ArrayType<T, N>&;
+
+    template <size_t N>
+    using StringType = ArrayType<char, N>;
+
+    template <size_t N>
+    using StringRef = StringType<N>&;
+
     struct NonCopyable
     {
         NonCopyable() = default;

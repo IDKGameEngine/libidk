@@ -23,6 +23,7 @@ public:
     class TreeNode;
 
     CfgParser();
+    CfgParser(const char *path);
     void load(const char *path);
     void print();
     const TreeNode &operator[](const char *key) const;
