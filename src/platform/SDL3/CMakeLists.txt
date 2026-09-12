@@ -10,7 +10,6 @@ target_sources(
 
 target_link_libraries(
     ${PROJECT_NAME} PUBLIC
-    glad
     SDL3
     SDL3_image
     SDL3_mixer

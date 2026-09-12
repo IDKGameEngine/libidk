@@ -7,8 +7,6 @@
 #define VMA_IMPLEMENTATION
 #include <vk_mem_alloc.h>
  
-#include <VkBootstrap.h>
- 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
  
@@ -20,16 +18,35 @@ idk::SDL3Video::SDL3Video(const char *title, int w, int h)
     mWidth(w),
     mHeight(h)
 {
-    VkApplicationInfo appInfo {
-        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName = "How to Vulkan",
-        .apiVersion = VK_API_VERSION_1_3
-    };
-
     if (false == SDL_Init(SDL_INIT_VIDEO))
     {
         VLOG_FATAL("{}", SDL_GetError());
     }
+
+    if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, SDL_WINDOW_VULKAN)))
+    {
+        VLOG_FATAL("SDL_CreateWindow: {}", SDL_GetError());
+    }
+
+    volkInitialize();
+
+    VkInstance instance;
+    VkApplicationInfo appInfo;
+    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    appInfo.pApplicationName = "How to Vulkan";
+    appInfo.apiVersion = VK_API_VERSION_1_4;
+
+    uint32_t instanceExtensionsCount { 0 };
+    char const* const* instanceExtensions { SDL_Vulkan_GetInstanceExtensions(&instanceExtensionsCount) };
+
+    VkInstanceCreateInfo instanceCI;
+    instanceCI.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    instanceCI.pApplicationInfo = &appInfo;
+    instanceCI.enabledExtensionCount = instanceExtensionsCount;
+    instanceCI.ppEnabledExtensionNames = instanceExtensions;
+
+    IDK_ASSERT(VK_SUCCESS == vkCreateInstance(&instanceCI, nullptr, &instance), "Ruh roh");
+
 
     // if (!SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE))
     // {
@@ -65,11 +82,6 @@ idk::SDL3Video::SDL3Video(const char *title, int w, int h)
     // {
     //     VLOG_ERROR("{}", SDL_GetError());
     // }
-
-    if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, SDL_WINDOW_VULKAN)))
-    {
-        VLOG_FATAL("SDL_CreateWindow: {}", SDL_GetError());
-    }
 
     // if (!(mGl = SDL_GL_CreateContext((SDL_Window*)mWin)))
     // {
