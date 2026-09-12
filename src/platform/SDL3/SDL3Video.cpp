@@ -13,7 +13,6 @@
 #include <SDL3/SDL_vulkan.h>
  
 
-
 idk::SDL3Video::SDL3Video(const char *title, int w, int h)
 :   mTitle(title),
     mWin(nullptr),
@@ -21,6 +20,12 @@ idk::SDL3Video::SDL3Video(const char *title, int w, int h)
     mWidth(w),
     mHeight(h)
 {
+    VkApplicationInfo appInfo {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pApplicationName = "How to Vulkan",
+        .apiVersion = VK_API_VERSION_1_3
+    };
+
     if (false == SDL_Init(SDL_INIT_VIDEO))
     {
         VLOG_FATAL("{}", SDL_GetError());
