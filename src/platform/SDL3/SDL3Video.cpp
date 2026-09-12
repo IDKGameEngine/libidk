@@ -2,7 +2,6 @@
 #include "libidk/log.hpp"
 
 #include <glad/glad.h>
-#include <GL/glu.h>
 #include <SDL3/SDL.h>
 
 
