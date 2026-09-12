@@ -11,7 +11,7 @@ namespace idk
     class List: public idk::Immobile
     {
     private:
-        T  *mData;
+        T     *mData;
         size_t mTop;
         size_t mEnd;
 
@@ -90,7 +90,7 @@ namespace idk
         T mBuf[MaxSize];
 
     public:
-        InplaceList(): idk::List<T>(mBuf, int(MaxSize)) {  };
+        InplaceList(): idk::List<T>(mBuf[0], int(MaxSize)) {  };
 
     };
 

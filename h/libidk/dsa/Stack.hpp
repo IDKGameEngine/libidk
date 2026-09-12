@@ -7,32 +7,32 @@
 
 namespace idk
 {
-    template <typename DataType>
+    template <typename T>
     class Stack: public idk::Immobile
     {
     private:
-        DataType *mData;
+        T        *mData;
         int       mTop;
         const int mEnd;
 
     public:
-        using ValueType = DataType;
+        using ValueType = T;
 
-        Stack(DataType *buf, int size): mData(buf), mTop(0), mEnd(size) {  }
+        Stack(T *buf, int size): mData(buf), mTop(0), mEnd(size) {  }
 
-        void push(const DataType &value)
+        void push(const T &value)
         {
             IDK_ASSERT(mTop < mEnd, "Stack overflow");
-            new (&mData[mTop++]) DataType(value);
+            new (&mData[mTop++]) T(value);
         }
 
         void pop()
         {
             IDK_ASSERT(mTop > 0, "Stack underflow");
-            mData[--mTop].~DataType();
+            mData[--mTop].~T();
         }
 
-        DataType &top()
+        T &top()
         {
             IDK_ASSERT(mTop > 0, "Stack empty");
             return mData[mTop-1];
@@ -45,13 +45,13 @@ namespace idk
             this->pop();
         }
 
-        DataType &operator[](size_t idx)
+        T &operator[](size_t idx)
         {
             IDK_ASSERT(0<=idx && idx<mEnd, "Index out of bounds");
             return mData[idx];
         }
 
-        const DataType &operator[](size_t idx) const
+        const T &operator[](size_t idx) const
         {
             IDK_ASSERT(0<=idx && idx<mEnd, "Index out of bounds");
             return mData[idx];
@@ -70,15 +70,14 @@ namespace idk
         bool full()  const { return (mTop == mEnd); }
     };
 
-
-    template <typename DataType, uint32_t Capacity>
-    class InplaceStack: public idk::Stack<DataType>
+    template <typename T, int Capacity>
+    class InplaceStack: public idk::Stack<T>
     {
     private:
-        DataType mBuf[Capacity];
+        T mBuf[Capacity];
 
     public:
-        InplaceStack(): Immobile(), Stack<DataType>(&mBuf, Capacity) {  };
+        InplaceStack(): Stack<T>(&mBuf[0], Capacity) {  };
 
     };
 
