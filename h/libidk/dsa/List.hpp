@@ -90,7 +90,7 @@ namespace idk
         T mBuf[MaxSize];
 
     public:
-        InplaceList(): idk::List<T>(mBuf[0], int(MaxSize)) {  };
+        InplaceList(): idk::List<T>(&mBuf[0], int(MaxSize)) {  };
 
     };
 

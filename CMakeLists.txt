@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.2)
+cmake_minimum_required(VERSION 3.31)
 
 project(libidk VERSION 0.0.1)
 
@@ -18,7 +18,7 @@ target_compile_options(
 )
 target_link_libraries(
     ${PROJECT_NAME} PUBLIC
-    SDL3_net::SDL3_net
+    SDL3_net
     glm::glm-header-only
 )
 target_include_directories(

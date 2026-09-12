@@ -11,7 +11,7 @@ target_sources(
 target_link_libraries(
     ${PROJECT_NAME} PUBLIC
     glad
-    SDL3::SDL3-shared
-    SDL3_image::SDL3_image
-    SDL3_mixer::SDL3_mixer
+    SDL3
+    SDL3_image
+    SDL3_mixer
 )
