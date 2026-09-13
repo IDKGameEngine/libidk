@@ -24,7 +24,7 @@ target_link_libraries(
 target_include_directories(
     ${PROJECT_NAME} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/h/libidk/platform/${IDK_PLATFORM}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/h/libidk/platform/SDL3" # ${IDK_PLATFORM}"
 )
 target_sources(
     ${PROJECT_NAME} PRIVATE
@@ -43,5 +43,5 @@ target_sources(
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/dsa")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/object")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform/${IDK_PLATFORM}")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform/SDL3") # ${IDK_PLATFORM}")
 
