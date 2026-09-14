@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idk/backend/IAudioBackend.hpp"
+#include "libidk/platform/IAudioBackend.hpp"
 #include "libidk/dsa/List.hpp"
 #include "libidk/dsa/Stack.hpp"
 #include <SDL3_mixer/SDL_mixer.h>

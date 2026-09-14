@@ -21,7 +21,7 @@ target_link_libraries(
 )
 target_include_directories(
     ${PROJECT_NAME} PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 target_sources(
     ${PROJECT_NAME} PRIVATE
@@ -42,7 +42,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/object")
 
 
-set(IDK_PLATFORM_BACKEND "backend-sdl3")
+set(IDK_PLATFORM_BACKEND "platform-sdl3")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/${IDK_PLATFORM_BACKEND}")
-
 

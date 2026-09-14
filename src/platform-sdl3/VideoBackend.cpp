@@ -1,4 +1,4 @@
-#include "idk/backend-sdl3/VideoBackend.hpp"
+#include "libidk/platform-sdl3/VideoBackend.hpp"
 #include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 

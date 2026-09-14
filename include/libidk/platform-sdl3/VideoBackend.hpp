@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idk/backend/IVideoBackend.hpp"
+#include "libidk/platform/IVideoBackend.hpp"
 
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>

@@ -1,4 +1,4 @@
-#include "idk/backend-sdl3/FilesystemBackend.hpp"
+#include "libidk/platform-sdl3/FilesystemBackend.hpp"
 #include "libidk/Assert.hpp"
 
 #include <SDL3/SDL.h>

@@ -1,4 +1,4 @@
-#include "idk/backend-sdl3/InputBackend.hpp"
+#include "libidk/platform-sdl3/InputBackend.hpp"
 
 
 idk::InputBackend::InputBackend()

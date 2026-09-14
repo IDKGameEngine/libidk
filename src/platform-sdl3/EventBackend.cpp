@@ -1,4 +1,4 @@
-#include "idk/backend-sdl3/EventBackend.hpp"
+#include "libidk/platform-sdl3/EventBackend.hpp"
 #include <SDL3/SDL.h>
 
 

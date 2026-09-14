@@ -1,4 +1,4 @@
-#include "idk/backend-sdl3/AudioBackend.hpp"
+#include "libidk/platform-sdl3/AudioBackend.hpp"
 #include "libidk/log.hpp"
 
 #include <SDL3/SDL.h>

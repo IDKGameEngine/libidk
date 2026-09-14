@@ -1,18 +1,19 @@
 #pragma once
 
-#include "idk/backend/IEventBackend.hpp"
+#include "libidk/platform/IInputBackend.hpp"
 
 
 namespace idk
 {
-    class EventBackend: public idk::IEventBackend
+    class InputBackend: public idk::IInputBackend
     {
     private:
 
     public:
-        EventBackend();
+        InputBackend();
         virtual void update(idk::BackendContext&) final;
 
     };
+
 }
 
