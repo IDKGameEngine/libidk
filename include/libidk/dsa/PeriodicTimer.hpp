@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libidk/Types.hpp"
-#include "libidk/platform/IBackendContext.hpp"
+#include <chrono>
 
 
 namespace idk
@@ -9,13 +9,11 @@ namespace idk
     class PeriodicTimer
     {
     private:
-        friend class ITimeBackend;
-        ITimeBackend *mTime;
         uint64_t periodNs_;
-        uint64_t startTimeNs_;
-        PeriodicTimer(ITimeBackend*, uint64_t rateHz);
+        std::chrono::steady_clock::time_point startTime_;
 
     public:
+        explicit PeriodicTimer(uint64_t rateHz = 1);
         bool expired();
         void reset();
         void setRateHz(uint64_t rateHz);
@@ -26,4 +24,3 @@ namespace idk
         template <typename T> T getPeriodSec() { return getPeriodMs<T>() / T(1000); }
     };
 }
-
