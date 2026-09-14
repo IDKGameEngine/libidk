@@ -50,7 +50,7 @@ namespace idk
         void setClearColor(float r, float g, float b, float a);
         void getClearColor(float &r, float &g, float &b, float &a) const;
 
-        virtual void  update(idk::BackendContext&) final;
+        virtual void  update(idk::IPlatformContext&) final;
 
         virtual void *getImpl()   final { return mWin; }
         virtual int   getWidth()  final { return mWidth; };

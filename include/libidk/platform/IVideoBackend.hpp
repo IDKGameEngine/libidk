@@ -1,11 +1,11 @@
 #pragma once
 
-#include "IBackendContext.hpp"
+#include "IPlatformContext.hpp"
 
 
 namespace idk
 {
-    class IVideoBackend: public idk::IBackendFeature
+    class IVideoBackend: public idk::IPlatformFeature
     {
     private:
 

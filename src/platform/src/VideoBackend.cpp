@@ -1,4 +1,4 @@
-#include "libidk/platform-sdl3/VideoBackend.hpp"
+#include "VideoBackend.hpp"
 #include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 
@@ -455,7 +455,7 @@ void idk::VideoBackend::getClearColor(float &r, float &g, float &b, float &a) co
 }
 
 
-void idk::VideoBackend::update(idk::BackendContext &ctx)
+void idk::VideoBackend::update(idk::IPlatformContext &ctx)
 {
     (void)ctx;
     SDL_PumpEvents();

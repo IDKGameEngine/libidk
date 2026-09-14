@@ -1,12 +1,12 @@
 #pragma once
 
-#include "IBackendContext.hpp"
+#include "IPlatformContext.hpp"
 #include "libidk/dsa/List.hpp"
 
 
 namespace idk
 {
-    class IEventBackend: public idk::IBackendFeature // , public idk::Observable
+    class IEventBackend: public idk::IPlatformFeature // , public idk::Observable
     {
     protected:
         static constexpr size_t MAX_CALLBACKS = 64;

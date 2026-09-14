@@ -1,4 +1,4 @@
-#include "libidk/platform-sdl3/EventBackend.hpp"
+#include "EventBackend.hpp"
 #include <SDL3/SDL.h>
 
 
@@ -11,7 +11,7 @@ idk::EventBackend::EventBackend()
 }
 
 
-void idk::EventBackend::update(idk::BackendContext &ctx)
+void idk::EventBackend::update(idk::IPlatformContext &ctx)
 {
     (void)ctx;
 
