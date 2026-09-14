@@ -8,83 +8,45 @@
 
 namespace idk
 {
-    class IPlatformContext;
     class IPlatformFeature;
-
-    class IAudioBackend;
-    class IEventBackend;
-    class IFilesystemBackend;
-    class IInputBackend;
-    class ITimeBackend;
-    class IVideoBackend;
-
-    class IPlatformFeature: public idk::Immobile
-    {
-    private:
-
-    public:
-        IPlatformFeature() {  };
-        virtual ~IPlatformFeature() = default;
-        virtual void update(idk::IPlatformContext&) {  }
-    };
-
 
     class IPlatformContext: public idk::Immobile
     {
-    private:
-        std::atomic<bool> mRunning;
-        size_t            mNumFeatures;
-        IPlatformFeature  *mFeatures[16];
-
     public:
-        IPlatformContext(): mRunning{true}, mNumFeatures(0) {  }
+        IPlatformContext();
+        virtual ~IPlatformContext() = default;
 
-        bool running()
-        {
-            return mRunning.load();
-        }
-
-        void shutdown()
-        {
-            mRunning.store(false);
-        }
-
-        void update()
-        {
-            for (size_t i=0; i<mNumFeatures; i++)
-            {
-                mFeatures[i]->update(*this);
-            }
-        }
+        bool running() const noexcept;
+        void shutdown() noexcept;
+        void update();
 
         template <typename FeatureType, typename... Args>
-        FeatureType *giveFeature(Args&&... args)
+        FeatureType &addFeature(Args&&... args)
         {
-            IDK_ASSERT(mNumFeatures < 16, "[idk::IPlatformContext::giveFeature] mFeatures overflow");
-            FeatureType *p = idk::New<FeatureType>(args...);
-            mFeatures[mNumFeatures++] = p;
-            return p;
+            IDK_ASSERT(mFeatureIdx<16, "[idk::IPlatformContext::giveFeature] mFeatures overflow");
+            mFeatures[mFeatureIdx++] = *(idk::New<FeatureType>(args...));
+            return *(mFeatures[mFeatureIdx-1]);
         }
 
-        // template <typename FeatureType>
-        // static idk::IPlatformContext MakeCtx()
-        // {
-        //     idk::IPlatformContext ctx;
-        //     mFeatures.push(new FeatureType());
-        //     return ctx;
-        // }
+        template <typename FeatureType>
+        FeatureType *getFeature() noexcept
+        {
+            for (int32_t i=0; i<mFeatureIdx; i++)
+            {
+                IPlatformFeature *p = mFeatures[i];
+                if (FeatureType *ft = dynamic_cast<FeatureType*>(p))
+                {
+                    return ft;
+                }
+            }
+            return nullptr;
+        }
 
-        // template <typename FeatureType, typename... Args>
-        // static idk::IPlatformContext MakeCtx()
-        // {
-        //     idk::IPlatformContext ctx = MakeCtx<Args...>();
-        //     ctx.mFeatures.push(new FeatureType());
-        //     return ctx;
-        // }
+    private:
+        int32_t            mFeatureIdx;
+        IPlatformFeature  *mFeatures[16];
+        std::atomic<bool>  mRunning {true};
+
     };
 
-    namespace platform
-    {
-        extern idk::IPlatformContext *getPlatformContext();
-    }
 }
