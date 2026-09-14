@@ -1,4 +1,4 @@
-#include "libidk/platform/SDL3FileSystem.hpp"
+#include "idk/backend-sdl3/FilesystemBackend.hpp"
 #include "libidk/Assert.hpp"
 
 #include <SDL3/SDL.h>
@@ -17,14 +17,13 @@ static void fsCloseFile(std::FILE *fh)
 }
 
 
-
-idk::SDL3FileSystem::SDL3FileSystem()
+idk::FilesystemBackend::FilesystemBackend()
 {
     namespace fs = std::filesystem;
     fs::current_path(fs::path(SDL_GetBasePath()) / fs::path("data"));
 }
 
-size_t idk::SDL3FileSystem::getFileSize(const char *filepath)
+size_t idk::FilesystemBackend::getFileSize(const char *filepath)
 {
     std::FILE *fh = nullptr;
     size_t sz = 0;
@@ -37,7 +36,7 @@ size_t idk::SDL3FileSystem::getFileSize(const char *filepath)
     return sz;
 }
 
-size_t idk::SDL3FileSystem::loadFile(const char *filepath, void *buf, size_t bufsz)
+size_t idk::FilesystemBackend::loadFile(const char *filepath, void *buf, size_t bufsz)
 {
     std::FILE *fh = fsOpenFile(filepath, "r");
     std::fseek(fh, 0, SEEK_END);

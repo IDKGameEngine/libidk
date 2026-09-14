@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libidk/platform/IPlatformAudio.hpp"
+#include "idk/backend/IAudioBackend.hpp"
 #include "libidk/dsa/List.hpp"
 #include "libidk/dsa/Stack.hpp"
 #include <SDL3_mixer/SDL_mixer.h>
@@ -8,22 +8,22 @@
 
 namespace idk
 {
-    class SDL3Audio: public IPlatformAudio
+    class AudioBackend: public idk::IAudioBackend
     {
     public:
         static constexpr uint16_t MAX_SOUNDS = 64;
 
-        class SoundType: public IPlatformAudio::ISoundType
+        class SoundType: public idk::IAudioBackend::ISoundType
         {
         private:
-            friend class idk::SDL3Audio;
+            friend class idk::AudioBackend;
             MIX_Audio *mAudio;
             MIX_Track *mTrack;
             uint16_t   mIdx;
         };
 
-        SDL3Audio();
-        virtual void update(PlatformContext&) final;
+        AudioBackend();
+        virtual void update(idk::BackendContext&) final;
         virtual ISoundType *createSound(const char *filepath);
         virtual void destroySound(ISoundType*) final;
         virtual void startSound(ISoundType*) final;

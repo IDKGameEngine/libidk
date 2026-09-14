@@ -1,8 +1,8 @@
-#include "libidk/platform/SDL3Events.hpp"
+#include "idk/backend-sdl3/EventBackend.hpp"
 #include <SDL3/SDL.h>
 
 
-idk::SDL3Events::SDL3Events()
+idk::EventBackend::EventBackend()
 {
     if (false == SDL_Init(SDL_INIT_EVENTS))
     {
@@ -11,7 +11,7 @@ idk::SDL3Events::SDL3Events()
 }
 
 
-void idk::SDL3Events::update(PlatformContext &ctx)
+void idk::EventBackend::update(idk::BackendContext &ctx)
 {
     (void)ctx;
 

@@ -1,4 +1,5 @@
-#include "libidk/platform/SDL3Video.hpp"
+#include "idk/backend-sdl3/VideoBackend.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 
 #define VK_NO_PROTOTYPES
@@ -18,7 +19,7 @@ namespace
     static constexpr VkFormat kSwapchainFormat = VK_FORMAT_B8G8R8A8_SRGB;
 }
 
-void idk::SDL3Video::createLogicalDevice()
+void idk::VideoBackend::createLogicalDevice()
 {
     uint32_t deviceCount = 0;
     IDK_ASSERT(VK_SUCCESS == vkEnumeratePhysicalDevices(mInstance, &deviceCount, nullptr), "vkEnumeratePhysicalDevices failed");
@@ -98,7 +99,7 @@ void idk::SDL3Video::createLogicalDevice()
     vkGetDeviceQueue(mDevice, queueFamilyIndex, 0, &mGraphicsQueue);
 }
 
-void idk::SDL3Video::createSwapchain()
+void idk::VideoBackend::createSwapchain()
 {
     VkSurfaceCapabilitiesKHR caps {};
     IDK_ASSERT(VK_SUCCESS == vkGetPhysicalDeviceSurfaceCapabilitiesKHR(mPhysicalDevice, mSurface, &caps), "vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed");
@@ -173,7 +174,7 @@ void idk::SDL3Video::createSwapchain()
     IDK_ASSERT(VK_SUCCESS == vkGetSwapchainImagesKHR(mDevice, mSwapchain, &imageCount, mSwapImages.data()), "vkGetSwapchainImagesKHR failed");
 }
 
-void idk::SDL3Video::createRenderPass()
+void idk::VideoBackend::createRenderPass()
 {
     VkAttachmentDescription colorAttachment {};
     colorAttachment.format = mSwapchainFormat;
@@ -214,7 +215,7 @@ void idk::SDL3Video::createRenderPass()
     IDK_ASSERT(VK_SUCCESS == vkCreateRenderPass(mDevice, &renderPassCI, nullptr, &mRenderPass), "vkCreateRenderPass failed");
 }
 
-void idk::SDL3Video::createFramebuffers()
+void idk::VideoBackend::createFramebuffers()
 {
     mSwapImageViews.clear();
     mFramebuffers.clear();
@@ -251,7 +252,7 @@ void idk::SDL3Video::createFramebuffers()
     }
 }
 
-void idk::SDL3Video::createCommandBuffer()
+void idk::VideoBackend::createCommandBuffer()
 {
     VkCommandPoolCreateInfo poolCI {};
     poolCI.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -274,7 +275,7 @@ void idk::SDL3Video::createCommandBuffer()
     IDK_ASSERT(VK_SUCCESS == vkCreateSemaphore(mDevice, &semCI, nullptr, &mRenderFinishedSemaphore), "vkCreateSemaphore failed");
 }
 
-void idk::SDL3Video::recreateSwapchain()
+void idk::VideoBackend::recreateSwapchain()
 {
     for (VkFramebuffer framebuffer : mFramebuffers)
     {
@@ -311,7 +312,7 @@ void idk::SDL3Video::recreateSwapchain()
     createFramebuffers();
 }
 
-idk::SDL3Video::SDL3Video(const char *title, int w, int h)
+idk::VideoBackend::VideoBackend(const char *title, int w, int h)
 :   mTitle(title),
     mWin(nullptr),
     mInstance(VK_NULL_HANDLE),
@@ -384,7 +385,7 @@ idk::SDL3Video::SDL3Video(const char *title, int w, int h)
 }
 
 
-idk::SDL3Video::~SDL3Video()
+idk::VideoBackend::~VideoBackend()
 {
     if (mDevice != VK_NULL_HANDLE)
     {
@@ -437,7 +438,7 @@ idk::SDL3Video::~SDL3Video()
 }
 
 
-void idk::SDL3Video::setClearColor(float r, float g, float b, float a)
+void idk::VideoBackend::setClearColor(float r, float g, float b, float a)
 {
     mClearColor[0] = r;
     mClearColor[1] = g;
@@ -445,7 +446,7 @@ void idk::SDL3Video::setClearColor(float r, float g, float b, float a)
     mClearColor[3] = a;
 }
 
-void idk::SDL3Video::getClearColor(float &r, float &g, float &b, float &a) const
+void idk::VideoBackend::getClearColor(float &r, float &g, float &b, float &a) const
 {
     r = mClearColor[0];
     g = mClearColor[1];
@@ -454,7 +455,7 @@ void idk::SDL3Video::getClearColor(float &r, float &g, float &b, float &a) const
 }
 
 
-void idk::SDL3Video::update(PlatformContext &ctx)
+void idk::VideoBackend::update(idk::BackendContext &ctx)
 {
     (void)ctx;
     SDL_PumpEvents();
@@ -546,7 +547,7 @@ void idk::SDL3Video::update(PlatformContext &ctx)
     }
 }
 
-void idk::SDL3Video::setWindowVisibility(bool visible)
+void idk::VideoBackend::setWindowVisibility(bool visible)
 {
     if (mWin == nullptr)
     {
@@ -563,7 +564,7 @@ void idk::SDL3Video::setWindowVisibility(bool visible)
     }
 }
 
-void idk::SDL3Video::setWindowResolution(int w, int h)
+void idk::VideoBackend::setWindowResolution(int w, int h)
 {
     if (mWin == nullptr)
     {
@@ -577,7 +578,7 @@ void idk::SDL3Video::setWindowResolution(int w, int h)
     mHeight = h;
 }
 
-void idk::SDL3Video::setRenderResolution(int w, int h)
+void idk::VideoBackend::setRenderResolution(int w, int h)
 {
     mWidth = w;
     mHeight = h;

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "libidk/platform/IPlatformFileSystem.hpp"
+#include "idk/backend/IFilesystemBackend.hpp"
 
 
 namespace idk
 {
-    class SDL3FileSystem: public IPlatformFileSystem
+    class FilesystemBackend: public idk::IFilesystemBackend
     {
     private:
         
     public:
-        SDL3FileSystem();
+        FilesystemBackend();
         virtual size_t getFileSize(const char *filepath) final;
         virtual size_t loadFile(const char *filepath, void *buf, size_t bufsz) final;
     };

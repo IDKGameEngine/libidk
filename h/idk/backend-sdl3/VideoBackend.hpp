@@ -1,14 +1,16 @@
 #pragma once
 
-#include "libidk/platform/IPlatformVideo.hpp"
+#include "idk/backend/IVideoBackend.hpp"
+
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
 #include <vector>
 
+
 namespace idk
 {
-    class SDL3Video: public IPlatformVideo
+    class VideoBackend: public idk::IVideoBackend
     {
     private:
         const char      *mTitle;
@@ -42,13 +44,13 @@ namespace idk
         void recreateSwapchain();
 
     public:
-        SDL3Video(const char *title, int w, int h);
-        ~SDL3Video();
+        VideoBackend(const char *title, int w, int h);
+        ~VideoBackend();
 
         void setClearColor(float r, float g, float b, float a);
         void getClearColor(float &r, float &g, float &b, float &a) const;
 
-        virtual void  update(PlatformContext&) final;
+        virtual void  update(idk::BackendContext&) final;
 
         virtual void *getImpl()   final { return mWin; }
         virtual int   getWidth()  final { return mWidth; };

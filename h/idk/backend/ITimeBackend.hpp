@@ -1,11 +1,12 @@
 #pragma once
 
-#include "PlatformContext.hpp"
+#include "IBackendContext.hpp"
 #include "libidk/dsa/PeriodicTimer.hpp"
+
 
 namespace idk
 {
-    class IPlatformTime: public IPlatformFeature
+    class ITimeBackend: public idk::IBackendFeature
     {
     private:
 

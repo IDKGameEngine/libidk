@@ -1,11 +1,11 @@
 #pragma once
 
-#include "PlatformContext.hpp"
+#include "IBackendContext.hpp"
 
 
 namespace idk
 {
-    class IPlatformAudio: public IPlatformFeature
+    class IAudioBackend: public idk::IBackendFeature
     {
     private:
         
@@ -17,7 +17,7 @@ namespace idk
             virtual ~ISoundType() = default;
         };
 
-        IPlatformAudio() {  };
+        IAudioBackend() {  };
         virtual ISoundType *createSound(const char *filepath) = 0;
         virtual void destroySound(ISoundType*) = 0;
         virtual void startSound(ISoundType*) = 0;
@@ -27,3 +27,4 @@ namespace idk
 
     };
 }
+

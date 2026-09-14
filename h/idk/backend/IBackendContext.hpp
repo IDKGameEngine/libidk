@@ -1,42 +1,43 @@
 #pragma once
 
 #include "libidk/Types.hpp"
-#include "libidk/dsa/List.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/New.hpp"
 #include <atomic>
 
 
 namespace idk
 {
-    class IPlatformFeature;
-    class PlatformContext;
+    class BackendContext;
+    class IBackendFeature;
 
+    class IAudioBackend;
+    class IEventBackend;
+    class IFilesystemBackend;
+    class IInputBackend;
+    class ITimeBackend;
+    class IVideoBackend;
 
-    class IPlatformFeature: public idk::Immobile
+    class IBackendFeature: public idk::Immobile
     {
     private:
 
     public:
-        IPlatformFeature() {  };
-        virtual ~IPlatformFeature() = default;
-        virtual void update(PlatformContext&) {  }
+        IBackendFeature() {  };
+        virtual ~IBackendFeature() = default;
+        virtual void update(idk::BackendContext&) {  }
     };
 
 
-    class PlatformContext: public idk::Immobile
+    class BackendContext: public idk::Immobile
     {
     private:
         std::atomic<bool> mRunning;
         size_t            mNumFeatures;
-        IPlatformFeature *mFeatures[16];
-        // idk::InplaceList<IPlatformFeature*, 16> mFeatures;
+        IBackendFeature  *mFeatures[16];
 
     public:
-        PlatformContext()
-        :   mRunning{true}, mNumFeatures(0)
-        { 
-
-        }
+        BackendContext(): mRunning{true}, mNumFeatures(0) {  }
 
         bool running()
         {
@@ -59,27 +60,26 @@ namespace idk
         template <typename FeatureType, typename... Args>
         FeatureType *giveFeature(Args&&... args)
         {
-            IDK_ASSERT(mNumFeatures < 16, "[PlatformContext::giveFeature] mFeatures overflow");
+            IDK_ASSERT(mNumFeatures < 16, "[idk::BackendContext::giveFeature] mFeatures overflow");
             FeatureType *p = idk::New<FeatureType>(args...);
             mFeatures[mNumFeatures++] = p;
             return p;
         }
 
         // template <typename FeatureType>
-        // static PlatformContext MakeCtx()
+        // static idk::BackendContext MakeCtx()
         // {
-        //     PlatformContext ctx;
+        //     idk::BackendContext ctx;
         //     mFeatures.push(new FeatureType());
         //     return ctx;
         // }
 
         // template <typename FeatureType, typename... Args>
-        // static PlatformContext MakeCtx()
+        // static idk::BackendContext MakeCtx()
         // {
-        //     PlatformContext ctx = MakeCtx<Args...>();
+        //     idk::BackendContext ctx = MakeCtx<Args...>();
         //     ctx.mFeatures.push(new FeatureType());
         //     return ctx;
         // }
     };
-
 }

@@ -1,17 +1,16 @@
 #pragma once
 
-#include "PlatformContext.hpp"
+#include "IBackendContext.hpp"
 #include "libidk/dsa/List.hpp"
-// #include "libidk/dsa/Observer.hpp"
 
 
 namespace idk
 {
-    class IPlatformEvents: public IPlatformFeature // , public idk::Observable
+    class IEventBackend: public idk::IBackendFeature // , public idk::Observable
     {
     protected:
         static constexpr size_t MAX_CALLBACKS = 64;
-        using EventCallback = void (*)(IPlatformEvents*, void *event);
+        using EventCallback = void (*)(IEventBackend*, void *event);
         idk::InplaceList<uintptr_t, MAX_CALLBACKS> mEventFuncs;
 
     public:

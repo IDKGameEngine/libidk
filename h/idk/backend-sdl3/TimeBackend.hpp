@@ -1,11 +1,11 @@
 #pragma once
 
-#include "libidk/platform/IPlatformTime.hpp"
+#include "idk/backend/ITimeBackend.hpp"
 
 
 namespace idk
 {
-    class SDL3Time: public IPlatformTime
+    class TimeBackend: public idk::ITimeBackend
     {
     private:
 

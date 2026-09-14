@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libidk/Types.hpp"
-#include "libidk/platform/IPlatform.hpp"
+#include "idk/backend/IBackendContext.hpp"
 
 
 namespace idk
@@ -9,11 +9,11 @@ namespace idk
     class PeriodicTimer
     {
     private:
-        friend class IPlatformTime;
-        IPlatformTime *mTime;
+        friend class ITimeBackend;
+        ITimeBackend *mTime;
         uint64_t periodNs_;
         uint64_t startTimeNs_;
-        PeriodicTimer(IPlatformTime*, uint64_t rateHz);
+        PeriodicTimer(ITimeBackend*, uint64_t rateHz);
 
     public:
         bool expired();

@@ -17,14 +17,11 @@ target_compile_options(
     ${PROJECT_NAME} PUBLIC -Werror -Wall -Wextra
 )
 target_link_libraries(
-    ${PROJECT_NAME} PUBLIC
-    SDL3_net
-    glm::glm-header-only
+    ${PROJECT_NAME} PUBLIC SDL3_net glm::glm-header-only
 )
 target_include_directories(
     ${PROJECT_NAME} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/h/libidk/platform/SDL3" # ${IDK_PLATFORM}"
 )
 target_sources(
     ${PROJECT_NAME} PRIVATE
@@ -43,5 +40,9 @@ target_sources(
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/dsa")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/object")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform/SDL3") # ${IDK_PLATFORM}")
+
+
+set(IDK_PLATFORM_BACKEND "backend-sdl3")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/${IDK_PLATFORM_BACKEND}")
+
 
