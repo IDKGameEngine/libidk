@@ -11,7 +11,7 @@ namespace idk
 
     public:
         InputBackend();
-        virtual void update(idk::IPlatformContext&) final;
+        virtual void update(idk::IPlatformContext*) final;
 
     };
 

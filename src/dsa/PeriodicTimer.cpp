@@ -1,12 +1,12 @@
-#include "libidk/platform/ITimeBackend.hpp"
 #include "libidk/dsa/PeriodicTimer.hpp"
+#include "libidk/Assert.hpp"
 #include "libidk/math.hpp"
 #include "libidk/metric.hpp"
 #include "libidk/log.hpp"
 
 
-idk::PeriodicTimer::PeriodicTimer(ITimeBackend *p, uint64_t rateHz = 1000000000)
-:   mTime(p), periodNs_(0), startTimeNs_(p->getSysTimeNs())
+idk::PeriodicTimer::PeriodicTimer(uint64_t rateHz)
+:   periodNs_(0), startTime_(std::chrono::steady_clock::now())
 {
     setRateHz(rateHz);
 }
@@ -14,8 +14,8 @@ idk::PeriodicTimer::PeriodicTimer(ITimeBackend *p, uint64_t rateHz = 1000000000)
 
 bool idk::PeriodicTimer::expired()
 {
-    uint64_t currTimeNs = mTime->getSysTimeNs();
-    if ((currTimeNs - startTimeNs_) >= periodNs_)
+    const auto elapsed = std::chrono::steady_clock::now() - startTime_;
+    if (elapsed >= std::chrono::nanoseconds(periodNs_))
     {
         return true;
     }
@@ -25,12 +25,12 @@ bool idk::PeriodicTimer::expired()
 
 void idk::PeriodicTimer::reset()
 {
-    startTimeNs_ = mTime->getSysTimeNs();
+    startTime_ = std::chrono::steady_clock::now();
 }
 
 
 void idk::PeriodicTimer::setRateHz(uint64_t rateHz)
 {
+    IDK_ASSERT(rateHz > 0, "PeriodicTimer rate must be greater than zero");
     periodNs_ = 1000000000 / rateHz;
 }
-

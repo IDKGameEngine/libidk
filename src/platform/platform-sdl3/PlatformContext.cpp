@@ -1,12 +1,6 @@
 #include "PlatformContext.hpp"
 
 
-idk::IPlatformContext *idk::platform::getPlatformContext()
-{
-
-}
-
-
 namespace idk
 {
     class IPlatformContext;
@@ -33,8 +27,8 @@ namespace idk
     class IPlatformContext: public idk::Immobile
     {
     private:
-        std::atomic<bool> mRunning;
-        size_t            mNumFeatures;
+        std::atomic<bool>  mRunning;
+        size_t             mNumFeatures;
         IPlatformFeature  *mFeatures[16];
 
     public:

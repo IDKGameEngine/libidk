@@ -11,6 +11,6 @@ namespace idk
     {
     public:
         virtual ~IPlatformFeature() = default;
-        virtual void update(IPlatformContext*) {}
+        virtual void update(IPlatformContext*) {  };
     };
 }
