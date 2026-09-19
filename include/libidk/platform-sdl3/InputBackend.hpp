@@ -12,7 +12,9 @@ namespace idk
     public:
         InputBackend();
         virtual void update(idk::IPlatformContext*) final;
-
+        virtual bool isKeyDown(int keycode) const final;
+        virtual bool isMouseButtonDown(int button) const final;
+        virtual void getMousePosition(int& x, int& y) const final;
     };
 
 }

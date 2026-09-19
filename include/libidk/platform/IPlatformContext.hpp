@@ -24,8 +24,8 @@ namespace idk
         FeatureType &addFeature(Args&&... args)
         {
             IDK_ASSERT(mFeatureIdx<16, "[idk::IPlatformContext::giveFeature] mFeatures overflow");
-            mFeatures[mFeatureIdx++] = *(idk::New<FeatureType>(args...));
-            return *(mFeatures[mFeatureIdx-1]);
+            mFeatures[mFeatureIdx++] = idk::New<FeatureType>(args...);
+            return *dynamic_cast<FeatureType*>(mFeatures[mFeatureIdx-1]);
         }
 
         template <typename FeatureType>

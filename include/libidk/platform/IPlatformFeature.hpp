@@ -10,6 +10,7 @@ namespace idk
     class IPlatformFeature: public idk::Immobile
     {
     public:
+        IPlatformFeature() {  };
         virtual ~IPlatformFeature() = default;
         virtual void update(IPlatformContext*) {  };
     };

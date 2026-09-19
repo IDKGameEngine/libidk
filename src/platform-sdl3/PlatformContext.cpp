@@ -1,11 +1,9 @@
-#include "libidk/platform/PlatformContextSdl3.hpp"
-
-#include "libidk/platform/IPlatformContext.hpp"
-#include "EventBackend.hpp"
-#include "FilesystemBackend.hpp"
-#include "InputBackend.hpp"
-#include "TimeBackend.hpp"
-#include "VideoBackend.hpp"
+#include "libidk/platform-sdl3/PlatformContext.hpp"
+#include "libidk/platform-sdl3/EventBackend.hpp"
+#include "libidk/platform-sdl3/FilesystemBackend.hpp"
+#include "libidk/platform-sdl3/InputBackend.hpp"
+#include "libidk/platform-sdl3/TimeBackend.hpp"
+#include "libidk/platform-sdl3/VideoBackend.hpp"
 
 idk::PlatformContextSdl3::PlatformContextSdl3(const PlatformConfig &cfg)
 {

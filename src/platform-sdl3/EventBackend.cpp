@@ -1,4 +1,5 @@
-#include "EventBackend.hpp"
+#include "libidk/platform-sdl3/EventBackend.hpp"
+#include "libidk/platform-sdl3/PlatformContext.hpp"
 #include <SDL3/SDL.h>
 
 
@@ -11,7 +12,7 @@ idk::EventBackend::EventBackend()
 }
 
 
-void idk::EventBackend::update(idk::IPlatformContext &ctx)
+void idk::EventBackend::update(idk::IPlatformContext *ctx)
 {
     (void)ctx;
 
@@ -25,14 +26,14 @@ void idk::EventBackend::update(idk::IPlatformContext &ctx)
 
         if (e.type == SDL_EVENT_QUIT)
         {
-            ctx.shutdown();
+            ctx->shutdown();
         }
 
         if (e.type == SDL_EVENT_KEY_UP)
         {
             if (e.key.scancode == SDL_SCANCODE_ESCAPE)
             {
-                ctx.shutdown();
+                ctx->shutdown();
             }
         }
     }

@@ -23,7 +23,7 @@ namespace idk
         };
 
         AudioBackend();
-        virtual void update(idk::IPlatformContext&) final;
+        virtual void update(idk::IPlatformContext*) final;
         virtual ISoundType *createSound(const char *filepath);
         virtual void destroySound(ISoundType*) final;
         virtual void startSound(ISoundType*) final;

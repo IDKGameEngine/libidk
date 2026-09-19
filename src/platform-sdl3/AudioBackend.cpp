@@ -1,4 +1,5 @@
-#include "AudioBackend.hpp"
+#include "libidk/platform-sdl3/AudioBackend.hpp"
+#include "libidk/platform-sdl3/PlatformContext.hpp"
 #include "libidk/log.hpp"
 #include <SDL3/SDL.h>
 
@@ -19,7 +20,7 @@ idk::AudioBackend::AudioBackend()
     }
 }
 
-void idk::AudioBackend::update(idk::IPlatformContext &ctx)
+void idk::AudioBackend::update(idk::IPlatformContext *ctx)
 {
     (void)ctx;
 }

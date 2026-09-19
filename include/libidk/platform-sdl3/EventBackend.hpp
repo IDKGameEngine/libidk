@@ -11,7 +11,7 @@ namespace idk
 
     public:
         EventBackend();
-        virtual void update(idk::IPlatformContext&) final;
+        virtual void update(idk::IPlatformContext*) final;
 
     };
 }

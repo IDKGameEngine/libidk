@@ -11,6 +11,7 @@ namespace idk
         
     public:
         FilesystemBackend();
+        virtual void update(idk::IPlatformContext*) final {  };
         virtual size_t getFileSize(const char *filepath) final;
         virtual size_t loadFile(const char *filepath, void *buf, size_t bufsz) final;
     };

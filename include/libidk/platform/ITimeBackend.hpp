@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IPlatformFeature.hpp"
-#include "libidk/dsa/PeriodicTimer.hpp"
 
 
 namespace idk
@@ -13,11 +12,6 @@ namespace idk
     public:
         virtual uint64_t getSysTimeMs() = 0;
         virtual uint64_t getSysTimeNs() = 0;
-
-        PeriodicTimer createTimer(uint64_t rateHz)
-        {
-            return PeriodicTimer(this, rateHz);
-        }
 
     };
 }

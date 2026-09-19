@@ -16,7 +16,6 @@ target_link_libraries(
 target_include_directories(
     ${PROJECT_NAME} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/platform-sdl3/include"
 )
 target_sources(
     ${PROJECT_NAME} PRIVATE
@@ -36,3 +35,4 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/dsa")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/object")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform-sdl3")
