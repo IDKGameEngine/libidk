@@ -2,9 +2,8 @@
 
 #include "libidk/platform/IPlatformContext.hpp"
 
-#include <memory>
 
-namespace idk::platform
+namespace idk
 {
     struct PlatformConfig
     {
@@ -13,5 +12,10 @@ namespace idk::platform
         int windowHeight;
     };
 
-    std::unique_ptr<IPlatformContext> createSdlPlatform(const PlatformConfig& config);
+    class PlatformContextSdl3: public idk::IPlatformContext
+    {
+    public:
+        PlatformContextSdl3(const PlatformConfig &cfg);
+    };
+
 }

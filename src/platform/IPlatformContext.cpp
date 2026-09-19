@@ -9,12 +9,12 @@ idk::IPlatformContext::IPlatformContext()
 
 }
 
-bool idk::IPlatformContext::running() const noexcept
+bool idk::IPlatformContext::running()
 {
     return mRunning.load(std::memory_order_acquire);
 }
 
-void idk::IPlatformContext::shutdown() noexcept
+void idk::IPlatformContext::shutdown()
 {
     mRunning.store(false, std::memory_order_release);
 }

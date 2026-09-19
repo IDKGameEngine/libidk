@@ -16,8 +16,8 @@ namespace idk
         IPlatformContext();
         virtual ~IPlatformContext() = default;
 
-        bool running() const noexcept;
-        void shutdown() noexcept;
+        bool running();
+        void shutdown();
         void update();
 
         template <typename FeatureType, typename... Args>
@@ -43,9 +43,9 @@ namespace idk
         }
 
     private:
+        std::atomic<bool>  mRunning {true};
         int32_t            mFeatureIdx;
         IPlatformFeature  *mFeatures[16];
-        std::atomic<bool>  mRunning {true};
 
     };
 
