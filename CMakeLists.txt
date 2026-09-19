@@ -11,7 +11,7 @@ set_target_properties(
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 target_compile_options(${PROJECT_NAME} PUBLIC -Werror -Wall -Wextra)
 target_link_libraries(
-    ${PROJECT_NAME} PUBLIC SDL3_net glm::glm-header-only
+    ${PROJECT_NAME} PRIVATE SDL3_net SDL3_mixer glm::glm-header-only
 )
 target_include_directories(
     ${PROJECT_NAME} PUBLIC

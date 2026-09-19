@@ -33,8 +33,7 @@ namespace idk
         {
             for (int32_t i=0; i<mFeatureIdx; i++)
             {
-                IPlatformFeature *p = mFeatures[i];
-                if (FeatureType *ft = dynamic_cast<FeatureType*>(p))
+                if (FeatureType *ft = dynamic_cast<FeatureType*>(mFeatures[i]))
                 {
                     return ft;
                 }

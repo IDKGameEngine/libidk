@@ -29,6 +29,7 @@ idk::AudioBackend::ISoundType *idk::AudioBackend::createSound(const char *filepa
 {
     if (mFreelist.empty())
     {
+        VLOG_WARN("[AudioBackend::createSound] Cannot create any more sounds!");
         return nullptr;
     }
 
