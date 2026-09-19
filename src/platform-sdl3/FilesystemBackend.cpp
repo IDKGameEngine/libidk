@@ -21,7 +21,7 @@ static void fsCloseFile(std::FILE *fh)
 idk::FilesystemBackend::FilesystemBackend()
 {
     namespace fs = std::filesystem;
-    fs::current_path(fs::path(SDL_GetBasePath()) / fs::path("data"));
+    fs::current_path(fs::path(SDL_GetBasePath()) / fs::path(IDK_CONTENT_BASEPATH));
 }
 
 size_t idk::FilesystemBackend::getFileSize(const char *filepath)
