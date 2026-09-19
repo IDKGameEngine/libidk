@@ -20,6 +20,11 @@ idk::AudioBackend::AudioBackend()
     }
 }
 
+idk::AudioBackend::~AudioBackend()
+{
+    MIX_Quit();
+}
+
 void idk::AudioBackend::update(idk::IPlatformContext *ctx)
 {
     (void)ctx;

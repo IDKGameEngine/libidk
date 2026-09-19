@@ -28,12 +28,12 @@ idk::VideoBackend::VideoBackend(const char *title, int w, int h)
         VLOG_FATAL("{}", SDL_GetError());
     }
 
-    if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, 0)))
+    if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, SDL_WINDOW_VULKAN)))
     {
         VLOG_FATAL("SDL_CreateWindow: {}", SDL_GetError());
     }
 
-    // volkInitialize();
+    volkInitialize();
 
     // uint32_t instanceExtensionsCount { 0 };
     // auto *instanceExtensions = SDL_Vulkan_GetInstanceExtensions(&instanceExtensionsCount);
@@ -48,7 +48,7 @@ idk::VideoBackend::VideoBackend(const char *title, int w, int h)
     // appInfo.applicationVersion = VK_MAKE_API_VERSION(0, 0, 1, 0);
     // appInfo.apiVersion = VK_API_VERSION_1_4;
 
-    // std::vector<const char *> enabledExtensions;
+    // std::vector<const char*> enabledExtensions;
     // enabledExtensions.assign(instanceExtensions, instanceExtensions + instanceExtensionsCount);
 
     // VkInstanceCreateInfo instanceCI {};
@@ -70,8 +70,6 @@ idk::VideoBackend::VideoBackend(const char *title, int w, int h)
 
 idk::VideoBackend::~VideoBackend()
 {
-    SDL_PumpEvents();
-
     // if (mInstance != VK_NULL_HANDLE)
     // {
     //     vkDestroyInstance(mInstance, nullptr);

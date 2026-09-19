@@ -14,7 +14,7 @@ namespace idk
     {
     public:
         IPlatformContext();
-        virtual ~IPlatformContext();
+        virtual ~IPlatformContext() = default;
 
         bool running();
         void shutdown();
@@ -43,8 +43,12 @@ namespace idk
 
     private:
         std::atomic<bool>  mRunning {true};
+        std::atomic<bool>  mShutdown {false};
         int32_t            mFeatureIdx;
         IPlatformFeature  *mFeatures[16];
+
+        void update_features();
+        void kill_features();
 
     };
 
