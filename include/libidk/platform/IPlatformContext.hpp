@@ -14,7 +14,7 @@ namespace idk
     {
     public:
         IPlatformContext();
-        virtual ~IPlatformContext() = default;
+        virtual ~IPlatformContext();
 
         bool running();
         void shutdown();

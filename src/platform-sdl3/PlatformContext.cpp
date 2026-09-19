@@ -16,3 +16,7 @@ idk::PlatformContextSdl3::PlatformContextSdl3(const PlatformConfig &cfg)
     addFeature<idk::VideoBackend>(cfg.windowTitle, cfg.windowWidth, cfg.windowHeight);
 }
 
+idk::PlatformContextSdl3::~PlatformContextSdl3()
+{
+    SDL_Quit();
+}

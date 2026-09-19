@@ -9,6 +9,14 @@ idk::IPlatformContext::IPlatformContext()
 
 }
 
+idk::IPlatformContext::~IPlatformContext()
+{
+    for (int32_t i=0; i<mFeatureIdx; i++)
+    {
+        mFeatures[i]->~IPlatformFeature();
+    }
+}
+
 bool idk::IPlatformContext::running()
 {
     return mRunning.load(std::memory_order_acquire);

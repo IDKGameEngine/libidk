@@ -28,7 +28,7 @@ idk::VideoBackend::VideoBackend(const char *title, int w, int h)
         VLOG_FATAL("{}", SDL_GetError());
     }
 
-    if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, SDL_WINDOW_VULKAN)))
+    if (!(mWin = SDL_CreateWindow(title, mWidth, mHeight, 0)))
     {
         VLOG_FATAL("SDL_CreateWindow: {}", SDL_GetError());
     }
@@ -81,15 +81,12 @@ idk::VideoBackend::~VideoBackend()
         SDL_DestroyWindow((SDL_Window*)mWin);
         mWin = nullptr;
     }
-
-    SDL_Quit();
 }
 
 
 void idk::VideoBackend::update(idk::IPlatformContext *ctx)
 {
     (void)ctx;
-    SDL_PumpEvents();
 }
 
 void idk::VideoBackend::setWindowVisibility(bool visible)

@@ -16,6 +16,7 @@ namespace idk
     {
     public:
         PlatformContextSdl3(const PlatformConfig &cfg);
+        ~PlatformContextSdl3();
     };
 
 }
