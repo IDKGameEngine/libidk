@@ -3,17 +3,8 @@
 #include "libidk/Assert.hpp"
 #include "libidk/log.hpp"
 
-#define VK_NO_PROTOTYPES
-#include <volk/volk.h>
- 
-// #define VMA_IMPLEMENTATION
-// #include <vk_mem_alloc.h>
- 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
-
-#include <algorithm>
-#include <vector>
 
 
 idk::VideoBackend::VideoBackend(const char *title, int w, int h)
@@ -32,8 +23,6 @@ idk::VideoBackend::VideoBackend(const char *title, int w, int h)
     {
         VLOG_FATAL("SDL_CreateWindow: {}", SDL_GetError());
     }
-
-    volkInitialize();
 
     // uint32_t instanceExtensionsCount { 0 };
     // auto *instanceExtensions = SDL_Vulkan_GetInstanceExtensions(&instanceExtensionsCount);
@@ -70,12 +59,6 @@ idk::VideoBackend::VideoBackend(const char *title, int w, int h)
 
 idk::VideoBackend::~VideoBackend()
 {
-    // if (mInstance != VK_NULL_HANDLE)
-    // {
-    //     vkDestroyInstance(mInstance, nullptr);
-    //     mInstance = VK_NULL_HANDLE;
-    // }
-
     if (mWin != nullptr)
     {
         SDL_DestroyWindow((SDL_Window*)mWin);
@@ -96,7 +79,6 @@ void idk::VideoBackend::setWindowVisibility(bool visible)
     {
         return;
     }
-
     if (visible)
     {
         SDL_ShowWindow((SDL_Window*)mWin);
