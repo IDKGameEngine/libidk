@@ -10,7 +10,6 @@ namespace idk
     private:
 
     public:
-        virtual void *getImpl() = 0;
         virtual int   getWidth() = 0;
         virtual int   getHeight() = 0;
         virtual void  setWindowVisibility(bool visible) = 0;
