@@ -70,11 +70,13 @@ idk::VideoBackend::VideoBackend(const char *title, int w, int h)
 
 idk::VideoBackend::~VideoBackend()
 {
-    if (mInstance != VK_NULL_HANDLE)
-    {
-        vkDestroyInstance(mInstance, nullptr);
-        mInstance = VK_NULL_HANDLE;
-    }
+    SDL_PumpEvents();
+
+    // if (mInstance != VK_NULL_HANDLE)
+    // {
+    //     vkDestroyInstance(mInstance, nullptr);
+    //     mInstance = VK_NULL_HANDLE;
+    // }
 
     if (mWin != nullptr)
     {
@@ -88,6 +90,7 @@ void idk::VideoBackend::update(idk::IPlatformContext *ctx)
 {
     (void)ctx;
 }
+
 
 void idk::VideoBackend::setWindowVisibility(bool visible)
 {
