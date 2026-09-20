@@ -42,15 +42,21 @@ namespace idk
             return mData[mTop-1];
         }
 
+        void resize(size_t sz)
+        {
+            while (size() < sz) { push(T()); }
+            while (size() > sz) { pop();     }
+        }
+
         T &operator[](size_t idx)
         {
-            IDK_ASSERT(0<=idx && idx<mEnd, "[idk::List] Index out of bounds");
+            IDK_ASSERT(idx<mEnd, "[idk::List] Index out of bounds");
             return mData[idx];
         }
 
         const T &operator[](size_t idx) const
         {
-            IDK_ASSERT(0<=idx && idx<mEnd, "[idk::List] Index out of bounds");
+            IDK_ASSERT(idx<mEnd, "[idk::List] Index out of bounds");
             return mData[idx];
         }
 

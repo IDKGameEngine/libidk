@@ -8,8 +8,12 @@ set_target_properties(
     OUTPUT_NAME "${PROJECT_NAME}"
     PREFIX ""
 )
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
-target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wall -Wextra)
+target_compile_features(
+    ${PROJECT_NAME} PUBLIC cxx_std_23
+)
+target_compile_options(
+    ${PROJECT_NAME} PRIVATE -Werror -Wall -Wextra
+)
 target_link_libraries(
     ${PROJECT_NAME} PRIVATE glm::glm-header-only
 )
