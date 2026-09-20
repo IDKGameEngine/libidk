@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <GL/glu.h>
+// #include <GL/glu.h>
 // #include <GL/gl.h>
 
 #include <cstdio>
@@ -29,7 +29,6 @@
         GLenum err = glGetError(); \
         if (err != GL_NO_ERROR) \
         { \
-            printf("OpenGL Error: %s\n", gluErrorString(err)); \
             fflush(stdout); \
             assert(err == GL_NO_ERROR); \
         } \

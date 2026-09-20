@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.31)
 
 project(libidk VERSION 0.0.1)
 
-add_library(${PROJECT_NAME} STATIC)
+find_package(glm REQUIRED)
+
+add_library(
+    ${PROJECT_NAME} STATIC
+)
 set_target_properties(
     ${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_NAME}"
