@@ -7,7 +7,7 @@ namespace idk
 {
     namespace core
     {
-        static constexpr size_t LIBIDK_ALLOCATOR_SIZE = 256 * idk::KILO;
+        static constexpr size_t LIBIDK_ALLOCATOR_SIZE = 1024 * idk::KILO;
         idk::Allocator *getStaticAllocator();
     }
 
