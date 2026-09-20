@@ -33,5 +33,3 @@ target_sources(
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/dsa")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/message")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/object")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/platform-sdl3")
