@@ -51,6 +51,11 @@ public:
         return true;
     }
 
+    void woopee()
+    {
+        VLOG_INFO("[idk::core::Queue<T, N>::woopee] {}", uintptr_t(this));
+    }
+
     // size_t size()       { return static_cast<size_t>(mSize.load()); }
     // size_t size() const { return static_cast<size_t>(mSize.load()); }
 
