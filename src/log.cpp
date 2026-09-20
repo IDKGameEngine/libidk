@@ -4,31 +4,8 @@
 
 #include <cstdarg>
 #include <cstdio>
-
 #include <mutex>
 
-// namespace idk::core
-// {
-//     static void log_event(idk::ArrayRefType<char, MAX_LOG_STRING_LENGTH> msg)
-//     {
-
-//     }
-
-//     void logEvent(const char *fmt, ...)
-//     {
-//         static char msgbuf[MAX_LOG_STRING_LENGTH];
-
-//         va_list vlist;
-//         va_start(vlist, fmt);
-//         std::snprintf(msgbuf, MAX_LOG_STRING_LENGTH, fmt, vlist);
-//         va_end(vlist);
-
-//         log_event(msgbuf);
-//     }
-// }
-
-
-using namespace idk;
 
 extern "C"
 {
@@ -42,7 +19,7 @@ extern "C"
 }
 
 
-void idk::vnlog(idk::LogType type, const char *title, const char *fmt, ...)
+void idk::vlog(idk::LogType type, const char *title, const char *fmt, ...)
 {
     const char *severity = "should_not_happen";
     const char *color = ANSI::RESET;
@@ -102,7 +79,7 @@ void idk::vnlog(idk::LogType type, const char *title, const char *fmt, ...)
 
 
 
-
+using namespace idk;
 
 int SysLog::indent_ = 0;
 
