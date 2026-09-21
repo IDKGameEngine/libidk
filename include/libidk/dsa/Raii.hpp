@@ -2,7 +2,6 @@
 
 #include "libidk/Types.hpp"
 
-
 namespace idk
 {
     template <typename T>

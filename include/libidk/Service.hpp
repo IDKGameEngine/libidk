@@ -27,7 +27,6 @@ namespace idk
         virtual void onPreRender(idk::EngineAPI&) {  };
         virtual void onMidRender(idk::EngineAPI&) {  };
         virtual void onPostRender(idk::EngineAPI&) {  };
-        virtual void onEvent(idk::EngineAPI&, const void*) {  };
     };
 
 
@@ -65,7 +64,6 @@ namespace idk
         void dispatchPreRender   (EngineAPI &api) { service_dispatch(&Service::onPreRender, api); }
         void dispatchMidRender   (EngineAPI &api) { service_dispatch(&Service::onMidRender, api); }
         void dispatchPostRender  (EngineAPI &api) { service_dispatch(&Service::onPostRender, api); }
-        void dispatchEvent       (EngineAPI &api, const void *e) { service_dispatch(&Service::onEvent, api, e); }
 
         template <typename ServiceType>
         void addService(ServiceType *srv)
@@ -84,9 +82,9 @@ namespace idk
         template <typename ServiceType>
         ServiceType *getService() noexcept
         {
-            for (Service *Service: mServices)
+            for (Service *srv: mServices)
             {
-                if (ServiceType *ptr = dynamic_cast<ServiceType*>(Service))
+                if (ServiceType *ptr = dynamic_cast<ServiceType*>(srv))
                 {
                     return ptr;
                 }
