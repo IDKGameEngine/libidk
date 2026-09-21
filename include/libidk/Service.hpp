@@ -9,6 +9,8 @@
 
 namespace idk
 {
+    class EngineAPI;
+
     class Service;
     class ServiceManager;
 
@@ -18,10 +20,10 @@ namespace idk
     public:
         Service() = default;
         virtual ~Service() = default;
-        virtual void onInit(ServiceManager*) = 0;
-        virtual void onUpdate(ServiceManager*) = 0;
-        virtual void onShutdown(ServiceManager*) = 0;
-        virtual void onEvent(ServiceManager*, const void*) = 0;
+        virtual void onInit(idk::EngineAPI&) = 0;
+        virtual void onUpdate(idk::EngineAPI&) = 0;
+        virtual void onShutdown(idk::EngineAPI&) = 0;
+        virtual void onEvent(idk::EngineAPI&, const void*) = 0;
     };
 
 
@@ -31,37 +33,38 @@ namespace idk
         idk::InplaceList<Service*, 32> mServices;
 
     public:
+        ServiceManager() = default;
         virtual ~ServiceManager() = default;
 
-        void initServices()
+        void initServices(idk::EngineAPI &api)
         {
             for (Service *srv: mServices)
             {
-                srv->onInit(this);
+                srv->onInit(api);
             }
         }
 
-        void updateServices()
+        void updateServices(idk::EngineAPI &api)
         {
             for (Service *srv: mServices)
             {
-                srv->onUpdate(this);
+                srv->onUpdate(api);
             }
         }
 
-        void shutdownServices()
+        void shutdownServices(idk::EngineAPI &api)
         {
             for (Service *srv: mServices)
             {
-                srv->onShutdown(this);
+                srv->onShutdown(api);
             }
         }
 
-        void broadcastEvent(const void *event)
+        void broadcastEvent(idk::EngineAPI &api, const void *event)
         {
             for (Service *srv: mServices)
             {
-                srv->onEvent(this, event);
+                srv->onEvent(api, event);
             }
         }
 

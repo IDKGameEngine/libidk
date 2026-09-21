@@ -27,8 +27,12 @@ protected:
 public:
     virtual ~Observer()
     {
-        if (mOwnr) { mOwnr->unsubscribe(this); }
+        if (mOwnr)
+        {
+            mOwnr->unsubscribe(this);
+        }
     }
+
     virtual void onNotify(const T&) = 0;
 };
 
