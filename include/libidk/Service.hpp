@@ -22,8 +22,10 @@ namespace idk
         virtual ~Service() = default;
         virtual void onInit(idk::EngineAPI&) = 0;
         virtual void onShutdown(idk::EngineAPI&) = 0;
-        virtual void onUpdate(idk::EngineAPI&) = 0;
-        virtual void onEvent(idk::EngineAPI&, const void*) = 0;
+        virtual void onPreFrame(idk::EngineAPI&) {  };
+        virtual void onMidFrame(idk::EngineAPI&) {  };
+        virtual void onPostFrame(idk::EngineAPI&) {  };
+        virtual void onEvent(idk::EngineAPI&, const void*) {  };
     };
 
 
@@ -53,20 +55,44 @@ namespace idk
             }
         }
 
-        void updateServices(idk::EngineAPI &api)
+        void updatePreFrame(idk::EngineAPI &api)
         {
             for (Service *srv: mServices)
             {
-                srv->onUpdate(api);
+                srv->onPreFrame(api);
+            }
+        }
+
+        void updateMidFrame(idk::EngineAPI &api)
+        {
+            for (Service *srv: mServices)
+            {
+                srv->onMidFrame(api);
+            }
+        }
+
+        void updatePostFrame(idk::EngineAPI &api)
+        {
+            for (Service *srv: mServices)
+            {
+                srv->onPostFrame(api);
             }
         }
 
         void broadcastEvent(idk::EngineAPI &api, const void *event)
         {
+            VLOG_INFO("[ServiceManager::broadcastEvent]");
             for (Service *srv: mServices)
             {
                 srv->onEvent(api, event);
             }
+        }
+
+        template <typename ServiceType, typename... Args>
+        void addService(Args&&... args)
+        {
+            IDK_ASSERT(!mServices.full(), "[ServiceManager::addService] Cannot add service: At capacity.");
+            mServices.push(idk::New<ServiceType>(args...));
         }
 
         template <typename ServiceType, typename... Args>
