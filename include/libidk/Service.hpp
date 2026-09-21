@@ -21,8 +21,8 @@ namespace idk
         Service() = default;
         virtual ~Service() = default;
         virtual void onInit(idk::EngineAPI&) = 0;
-        virtual void onUpdate(idk::EngineAPI&) = 0;
         virtual void onShutdown(idk::EngineAPI&) = 0;
+        virtual void onUpdate(idk::EngineAPI&) = 0;
         virtual void onEvent(idk::EngineAPI&, const void*) = 0;
     };
 
@@ -44,19 +44,20 @@ namespace idk
             }
         }
 
+        void shutdownServices(idk::EngineAPI &api)
+        {
+            size_t numServices = mServices.size();
+            for (size_t i=0; i<numServices; i++)
+            {
+                mServices[numServices - i - 1]->onShutdown(api);
+            }
+        }
+
         void updateServices(idk::EngineAPI &api)
         {
             for (Service *srv: mServices)
             {
                 srv->onUpdate(api);
-            }
-        }
-
-        void shutdownServices(idk::EngineAPI &api)
-        {
-            for (Service *srv: mServices)
-            {
-                srv->onShutdown(api);
             }
         }
 
