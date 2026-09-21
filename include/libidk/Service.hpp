@@ -22,9 +22,11 @@ namespace idk
         virtual ~Service() = default;
         virtual void onInit(idk::EngineAPI&) = 0;
         virtual void onShutdown(idk::EngineAPI&) = 0;
-        virtual void onPreFrame(idk::EngineAPI&) {  };
-        virtual void onMidFrame(idk::EngineAPI&) {  };
-        virtual void onPostFrame(idk::EngineAPI&) {  };
+        virtual void onUpdate(idk::EngineAPI&) {  };
+        virtual void onFixedUpdate(idk::EngineAPI&) {  };
+        virtual void onPreRender(idk::EngineAPI&) {  };
+        virtual void onMidRender(idk::EngineAPI&) {  };
+        virtual void onPostRender(idk::EngineAPI&) {  };
         virtual void onEvent(idk::EngineAPI&, const void*) {  };
     };
 
@@ -34,19 +36,21 @@ namespace idk
     private:
         idk::InplaceList<Service*, 32> mServices;
 
+        template <typename MemberFunc, typename... Args>
+        void service_dispatch(MemberFunc func, idk::EngineAPI& api, Args&&... args)
+        {
+            for (Service *service : mServices)
+            {
+                (service->*func)(api, args...);
+            }
+        }
+
+
     public:
         ServiceManager() = default;
         virtual ~ServiceManager() = default;
 
-        void initServices(idk::EngineAPI &api)
-        {
-            for (Service *srv: mServices)
-            {
-                srv->onInit(api);
-            }
-        }
-
-        void shutdownServices(idk::EngineAPI &api)
+        void dispatchShutdown(EngineAPI &api)
         {
             size_t numServices = mServices.size();
             for (size_t i=0; i<numServices; i++)
@@ -55,37 +59,13 @@ namespace idk
             }
         }
 
-        void updatePreFrame(idk::EngineAPI &api)
-        {
-            for (Service *srv: mServices)
-            {
-                srv->onPreFrame(api);
-            }
-        }
-
-        void updateMidFrame(idk::EngineAPI &api)
-        {
-            for (Service *srv: mServices)
-            {
-                srv->onMidFrame(api);
-            }
-        }
-
-        void updatePostFrame(idk::EngineAPI &api)
-        {
-            for (Service *srv: mServices)
-            {
-                srv->onPostFrame(api);
-            }
-        }
-
-        void broadcastEvent(idk::EngineAPI &api, const void *event)
-        {
-            for (Service *srv: mServices)
-            {
-                srv->onEvent(api, event);
-            }
-        }
+        void dispatchInit        (EngineAPI &api) { service_dispatch(&Service::onInit, api); }
+        void dispatchUpdate      (EngineAPI &api) { service_dispatch(&Service::onUpdate, api); }
+        void dispatchFixedUpdate (EngineAPI &api) { service_dispatch(&Service::onFixedUpdate, api); }
+        void dispatchPreRender   (EngineAPI &api) { service_dispatch(&Service::onPreRender, api); }
+        void dispatchMidRender   (EngineAPI &api) { service_dispatch(&Service::onMidRender, api); }
+        void dispatchPostRender  (EngineAPI &api) { service_dispatch(&Service::onPostRender, api); }
+        void dispatchEvent       (EngineAPI &api, const void *e) { service_dispatch(&Service::onEvent, api, e); }
 
         template <typename ServiceType>
         void addService(ServiceType *srv)
