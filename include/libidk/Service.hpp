@@ -81,7 +81,6 @@ namespace idk
 
         void broadcastEvent(idk::EngineAPI &api, const void *event)
         {
-            VLOG_INFO("[ServiceManager::broadcastEvent]");
             for (Service *srv: mServices)
             {
                 srv->onEvent(api, event);
