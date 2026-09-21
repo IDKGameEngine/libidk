@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.31)
 
 project(libidk VERSION 0.0.1)
 
-find_package(glm REQUIRED)
-
 add_library(
     ${PROJECT_NAME} STATIC
 )
