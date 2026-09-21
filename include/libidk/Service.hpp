@@ -88,11 +88,11 @@ namespace idk
             }
         }
 
-        template <typename ServiceType, typename... Args>
-        void addService(Args&&... args)
+        template <typename ServiceType>
+        void addService(ServiceType *srv)
         {
             IDK_ASSERT(!mServices.full(), "[ServiceManager::addService] Cannot add service: At capacity.");
-            mServices.push(idk::New<ServiceType>(args...));
+            mServices.push(srv);
         }
 
         template <typename ServiceType, typename... Args>
