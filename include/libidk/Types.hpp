@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <mutex>
+#include <limits>
+
 
 namespace idk
 {
@@ -41,16 +43,12 @@ namespace idk
         NonMovable &operator=(NonMovable&&) = delete;
     };
 
-    struct Immobile: private NonCopyable, private NonMovable
-    {
+    struct Immobile: private NonCopyable, private NonMovable {  };
 
-    };
+    template <typename T> constexpr auto NumericMax = std::numeric_limits<T>::max();
+    template <typename T> constexpr auto NumericMin = std::numeric_limits<T>::min();
 
-
-    class IEngine;
-
-    template <typename T>
-    using FuncPtr = T*;
+    template <typename T> using FuncPtr = T*;
 
     namespace detail
     {
