@@ -5,6 +5,7 @@
 #include <cstdlib>
 
 
+#ifdef IDK_DEBUG
 void idk::detail::vnassert(const char *file, int line, bool cond, const char *condstr, const char *msg)
 {
     if (cond == true)
@@ -18,4 +19,5 @@ void idk::detail::vnassert(const char *file, int line, bool cond, const char *co
     std::printf("Source:  %s:%d\n", file, line);
     std::abort();
 }
+#endif
 

@@ -10,6 +10,6 @@
     // #define IDK_ASSERT(...) idk::detail::vnassert(cond, __FILE__, __LINE__, std::format(__VA_ARGS__).c_str())
 
 #else
-    #define IDK_ASSERT()
+    #define IDK_ASSERT(Cond, ...) ((void)sizeof(Cond))
 
 #endif
