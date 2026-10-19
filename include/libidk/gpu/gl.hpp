@@ -20,7 +20,9 @@
 #endif
 
 
-#define IDK_OPENGL_DEBUG
+#if defined(IDK_DEBUG) && !defined(IDK_OPENGL_DEBUG)
+    #define IDK_OPENGL_DEBUG
+#endif
 #ifdef IDK_OPENGL_DEBUG
     #define IDK_GLCALL(Content_) \
     { \
@@ -225,7 +227,7 @@ namespace idk::gl
 
     IDK_INLINE void SpecializeShader(GLuint shader, const GLchar *pEntryPoint, GLuint numSpecializationConstants,
                                       const GLuint *pConstantIndex, const GLuint *pConstantValue)
-    { IDK_GLCALL( glSpecializeShaderARB(shader, pEntryPoint, numSpecializationConstants, pConstantIndex, pConstantValue); ) }
+    { IDK_GLCALL( glSpecializeShader(shader, pEntryPoint, numSpecializationConstants, pConstantIndex, pConstantValue); ) }
 
     IDK_INLINE void CompileShader( GLuint shader )
     { IDK_GLCALL( glCompileShader(shader); ) }
@@ -536,10 +538,10 @@ namespace idk::gl
     { IDK_GLCALL( glCreateBuffers(n, buffers); ) }
 
     IDK_INLINE GLuint CreateProgram()
-    { IDK_GLCALL( return glCreateProgram(); ) }
+    { GLuint result; IDK_GLCALL( result = glCreateProgram(); ) return result; }
 
     IDK_INLINE GLuint CreateShader(GLenum type)
-    { IDK_GLCALL( return glCreateShader(type); ) }
+    { GLuint result; IDK_GLCALL( result = glCreateShader(type); ) return result; }
 
     IDK_INLINE void NamedBufferData( GLuint buffer, GLsizeiptr size, const void *data, GLenum usage )
     { IDK_GLCALL( glNamedBufferData(buffer, size, data, usage); ) }
