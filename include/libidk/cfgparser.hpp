@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
 #include <map>
 #include <string>
 #include <vector>
@@ -24,29 +27,27 @@ public:
 
     CfgParser();
     CfgParser(const char *path);
-    void load(const char *path);
+    ~CfgParser();
+
+    CfgParser(const CfgParser &) = delete;
+    CfgParser &operator=(const CfgParser &) = delete;
+
+    bool load(const char *path);
+    const char *error() const { return mError; }
+    const TreeBase *find(const char *key) const;
     void print();
     const TreeNode &operator[](const char *key) const;
 
 private:
     TreeNode *rootNode_;
     std::vector<char> mBuf;
-    size_t mIdx, mLine, mCol;
+    size_t mIdx = 0;
+    const char *mError = nullptr;
 
-    std::string _readSection();
-    std::string _readLabel();
-    std::string _readTo(char);
-    std::string _readString();
-    std::string _readValue();
-
-    void skip(char);
     char peek();
     char advance();
-    char retreat();
-    char match(char);
-
-    void _parse(TreeNode*);
-    void _parse_section(TreeNode*);
+    void skipWhitespace();
+    bool parse(TreeNode *, bool section, unsigned depth);
     void _print(TreeNode*);
 
 };
@@ -97,6 +98,11 @@ public:
 
     }
 
+    ~TreeNode();
+
+    TreeNode(const TreeNode &) = delete;
+    TreeNode &operator=(const TreeNode &) = delete;
+
     const char *getValue() const
     {
         return reinterpret_cast<const TreeLeaf*>(this)->getValue();
@@ -110,6 +116,7 @@ public:
     double toF64() const { return atof(getValue()); }
 
     const TreeNode &operator[](const char *key) const;
+    const TreeBase *find(const char *key) const;
 
     template <typename T, typename... Args>
     T *insert(const std::string &key, Args... args)

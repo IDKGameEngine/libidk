@@ -1,272 +1,246 @@
 #include "libidk/cfgparser.hpp"
-#include "libidk/file.hpp"
-#include "libidk/log.hpp"
-#include <cstring>
+#include <cctype>
+#include <cstdio>
+#include <utility>
 
 using namespace idk;
 
+CfgParser::CfgParser() : rootNode_(new TreeNode("__root__")) {}
 
-void CfgParser::skip(char)
+CfgParser::CfgParser(const char *path) : CfgParser()
 {
-    char ch = mBuf[mIdx];
+    load(path);
+}
 
-    while (mIdx < mBuf.size() && ch)
-    {
-        ch = mBuf[mIdx++];
-    }
+CfgParser::~CfgParser()
+{
+    delete rootNode_;
+}
 
-    if (mIdx >= mBuf.size() - 1)
+CfgParser::TreeNode::~TreeNode()
+{
+    for (auto &[key, node] : nodes_)
     {
-        mIdx = mBuf.size() - 1;
+        if (node->isLeaf())
+            delete static_cast<TreeLeaf *>(node);
+        else
+            delete static_cast<TreeNode *>(node);
     }
 }
 
+bool CfgParser::load(const char *path)
+{
+    mError = nullptr;
+    std::FILE *file = std::fopen(path, "rb");
+    if (!file)
+    {
+        mError = "Could not open configuration file";
+        return false;
+    }
+    // The parser already owns dynamic tree/string storage. Bound file size and
+    // nesting so an editable configuration cannot consume unbounded resources.
+    if (std::fseek(file, 0, SEEK_END) != 0)
+    {
+        std::fclose(file);
+        mError = "Could not seek configuration file";
+        return false;
+    }
+    long length = std::ftell(file);
+    if (length < 0 || length > 1024 * 1024 || std::fseek(file, 0, SEEK_SET) != 0)
+    {
+        std::fclose(file);
+        mError = "Invalid configuration file size (maximum 1 MiB)";
+        return false;
+    }
+    CfgParser candidate;
+    candidate.mBuf.resize(size_t(length));
+    bool read = !length || std::fread(candidate.mBuf.data(), 1, size_t(length), file) == size_t(length);
+    bool closed = std::fclose(file) == 0;
+    if (!read || !closed)
+    {
+        mError = "Could not read configuration file";
+        return false;
+    }
+    for (char ch : candidate.mBuf)
+    {
+        if (!ch)
+        {
+            mError = "Unexpected null byte in configuration";
+            return false;
+        }
+    }
+    if (!candidate.parse(candidate.rootNode_, false, 0))
+    {
+        mError = candidate.mError;
+        return false;
+    }
+    std::swap(rootNode_, candidate.rootNode_);
+    return true;
+}
 
 char CfgParser::peek()
 {
-    if (mIdx >= mBuf.size() - 1)
-    {
-        mIdx = mBuf.size() - 1;
-        return '\0';
-    }
-    return mBuf[mIdx];
+    return mIdx < mBuf.size() ? mBuf[mIdx] : '\0';
 }
-
 
 char CfgParser::advance()
 {
     char ch = peek();
-    if (!ch) return ch;
-
-    mIdx += 1;
-    mCol += 1;
-
-    if (ch == '\n')
-    {
-        mLine += 1;
-        mCol = 1;
-    }
-
+    if (ch)
+        ++mIdx;
     return ch;
 }
 
-
-char CfgParser::retreat()
+void CfgParser::skipWhitespace()
 {
-    mIdx -= 1;
-    return peek();
-}
-
-
-char CfgParser::match( char ch )
-{
-    if (peek() == ch)
-        return advance();
-    return '\0';    
-}
-
-
-std::string CfgParser::_readLabel()
-{
-    std::string str = "";
-    while (char ch = advance())
+    for (;;)
     {
-        if (ch=='=' || (!isalnum(ch) && ch!='_' && ch!='-' && ch!='.'))
-            break;
-        str.push_back(ch);
-    }
-    return str;
-}
-
-
-std::string CfgParser::_readTo(char stop)
-{
-    std::string str = "";
-    while (char ch = advance())
-    {
-        if (ch==stop) break;
-        str.push_back(ch);
-    }
-    return str;
-}
-
-
-CfgParser::CfgParser()
-:   rootNode_(new TreeNode("__root__"))
-{
-
-}
-
-CfgParser::CfgParser(const char *path)
-:   CfgParser()
-{
-    this->load(path);
-}
-
-void CfgParser::load(const char *path)
-{
-    mBuf.clear();
-    mIdx = 0;
-    mLine = 0;
-    mCol = 0;
-
-    idk::FileReader reader(path);
-
-    auto  *src = static_cast<const char*>(reader.getData());
-    auto  *end = src + reader.getSize();
-
-    while ((src < end) && *src)
-    {
-        char ch = *(src++);
-        if (ch == ' ')
-            continue;
-        mBuf.push_back(ch);
-    }
-
-    mIdx  = 0;
-    mLine = 1;
-    mCol  = 1;
-
-    _parse(rootNode_);
-}
-
-
-void CfgParser::_parse(TreeNode *curr)
-{
-    while (char ch = peek())
-    {
-        if (match('\n'))
+        if (std::isspace(static_cast<unsigned char>(peek())))
+            advance();
+        else if (peek() == '#')
         {
-            continue;
+            while (peek() && advance() != '\n') {}
         }
-
-        else if (match('['))
-        {
-            std::string sname = _readTo(']');
-            _parse_section(curr->insert<TreeNode>(sname, sname));
-        }
-    
-        else if (isalpha(ch))
-        {
-            IDK_ASSERT(false, "Invalid format");
-        }
-    }
-}
-
-void CfgParser::_parse_section(TreeNode *curr)
-{
-    _readTo('{'); // [SectionName] { ...
-
-    while (char ch = peek())
-    {
-        if (match('\n'))
-        {
-            continue;
-        }
-
-        else if (match('}'))
-        {
+        else
             return;
-        }
-
-        else if (match('['))
-        {
-            std::string sname = _readTo(']');
-            _parse_section(curr->insert<TreeNode>(sname, sname));
-        }
-
-        else if (isalpha(ch))
-        {
-            std::string key = _readLabel();
-
-            if (match('\"'))
-            {
-                std::string value = _readTo('\"');
-                curr->insert<TreeLeaf>(key, value);
-            }
-            else
-            {
-                std::string value = _readTo('\n');
-                curr->insert<TreeLeaf>(key, value);
-            }
-        }
     }
 }
 
-
-const CfgParser::TreeNode &CfgParser::operator[](const char *searchKey) const
+bool CfgParser::parse(TreeNode *current, bool section, unsigned depth)
 {
-    return (*rootNode_)[searchKey];
+    if (depth > 32)
+    {
+        mError = "Configuration nesting exceeds 32 sections";
+        return false;
+    }
+    for (;;)
+    {
+        skipWhitespace();
+        if (!peek())
+        {
+            if (section)
+                mError = "Missing closing section brace";
+            return !section;
+        }
+        if (peek() == '}' && section)
+        {
+            advance();
+            return true;
+        }
+        if (peek() == '[')
+        {
+            advance();
+            std::string name;
+            while (peek() && peek() != ']' && peek() != '\n' && peek() != '\r' &&
+                   name.size() < MAX_NODE_NAME_LENGTH)
+                name.push_back(advance());
+            if (advance() != ']' || name.empty() || current->find(name.c_str()))
+            {
+                mError = "Invalid or duplicate section name";
+                return false;
+            }
+            skipWhitespace();
+            if (advance() != '{')
+            {
+                mError = "Expected opening section brace";
+                return false;
+            }
+            auto *node = current->insert<TreeNode>(name, name);
+            if (!parse(node, true, depth + 1))
+                return false;
+            continue;
+        }
+        if (!section || (!std::isalpha(static_cast<unsigned char>(peek())) && peek() != '_'))
+        {
+            mError = "Expected section or setting";
+            return false;
+        }
+        std::string key;
+        while (std::isalnum(static_cast<unsigned char>(peek())) || peek() == '_' || peek() == '-' || peek() == '.')
+        {
+            if (key.size() >= MAX_NODE_NAME_LENGTH)
+            {
+                mError = "Setting name is too long";
+                return false;
+            }
+            key.push_back(advance());
+        }
+        while (peek() == ' ' || peek() == '\t')
+            advance();
+        if (advance() != '=' || current->find(key.c_str()))
+        {
+            mError = "Expected '=' or found duplicate setting";
+            return false;
+        }
+        while (peek() == ' ' || peek() == '\t')
+            advance();
+        std::string value;
+        if (peek() == '"')
+        {
+            advance();
+            while (peek() && peek() != '"' && peek() != '\n' && peek() != '\r')
+                value.push_back(advance());
+            if (advance() != '"')
+            {
+                mError = "Unterminated quoted value";
+                return false;
+            }
+        }
+        else
+        {
+            while (peek() && peek() != '\n' && peek() != '\r' && peek() != '}' && peek() != '#')
+                value.push_back(advance());
+            while (!value.empty() && std::isspace(static_cast<unsigned char>(value.back())))
+                value.pop_back();
+        }
+        while (peek() == ' ' || peek() == '\t')
+            advance();
+        if (peek() && peek() != '\n' && peek() != '\r' && peek() != '}' && peek() != '#')
+        {
+            mError = "Unexpected text after setting";
+            return false;
+        }
+        current->insert<TreeLeaf>(key, value);
+    }
 }
 
-const CfgParser::TreeNode &CfgParser::TreeNode::operator[](const char *searchKey) const
+const CfgParser::TreeBase *CfgParser::TreeNode::find(const char *searchKey) const
+{
+    for (const auto &[key, node] : nodes_)
+        if (key == searchKey)
+            return node;
+    return nullptr;
+}
+
+const CfgParser::TreeBase *CfgParser::find(const char *key) const
+{
+    return rootNode_->find(key);
+}
+
+const CfgParser::TreeNode &CfgParser::operator[](const char *key) const
+{
+    return (*rootNode_)[key];
+}
+
+const CfgParser::TreeNode &CfgParser::TreeNode::operator[](const char *key) const
 {
     static TreeLeaf dummy("");
-
-    const TreeNode &curr = *this;
-    for (const auto &[key, nd]: curr)
-    {
-        if (key != std::string(searchKey))
-        {
-            continue;
-        }
-        if (nd->isLeaf())
-        {
-            return *reinterpret_cast<TreeNode*>(nd);
-        }
-        else
-        {
-            return *reinterpret_cast<TreeNode*>(nd);
-        }
-    }
-
-    return *reinterpret_cast<TreeNode*>(&dummy);
+    // Preserve the legacy leaf-as-node access API. New code can use find()
+    // and check the tag before casting to TreeNode or TreeLeaf.
+    const TreeBase *node = isLeaf() ? nullptr : find(key);
+    return *reinterpret_cast<const TreeNode *>(node ? node : &dummy);
 }
-
 
 void CfgParser::print() { _print(rootNode_); }
-void CfgParser::_print(CfgParser::TreeNode *currNode)
-{
-    TreeNode &curr = *currNode;
-    SysLog log("%s", curr.mName.c_str());
 
-    for (auto &[key, nd]: curr)
+void CfgParser::_print(TreeNode *current)
+{
+    SysLog log("%s", current->mName.c_str());
+    for (auto &[key, node] : *current)
     {
-        if (nd->isLeaf())
-        {
-            log("%s = \"%s\"", key.c_str(), ((TreeLeaf*)nd)->mValue.c_str());
-        }
+        if (node->isLeaf())
+            log("%s = \"%s\"", key.c_str(), static_cast<TreeLeaf *>(node)->getValue());
         else
-        {
-            _print((TreeNode*)nd);
-        }
+            _print(static_cast<TreeNode *>(node));
     }
 }
-
-
-
-// {
-//     for (auto &[section, keyval]: mData)
-//     {
-//         idk::SysLog log("Section %s", section.c_str());
-
-//         for (auto &[key, value]: keyval)
-//         {
-//             log("%s = \"%s\"", key.c_str(), value.c_str());
-//         }
-//     }
-// }
-
-
-
-
-
-// TreeBase *operator[](const std::string &key)
-// {
-//     if (nodes_.contains(key))
-//     {
-//         return nodes_[key];
-//     }
-// }
-
-
