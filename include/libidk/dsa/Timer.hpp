@@ -46,6 +46,12 @@ namespace idk
         {
             return mStepSec;
         }
+
+        // Read after draining step() to interpolate the last two fixed states.
+        double getInterpolationAlpha() const
+        {
+            return mAccumSec / mStepSec;
+        }
     };
 
     // class PeriodicTimer
