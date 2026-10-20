@@ -12,8 +12,10 @@ namespace idk
         uint64_t value;
         char ascii[sizeof(value)];
     
-        MessagePayloadType(const char *str)
+        MessagePayloadType(const char *str): value(0)
         {
+            if (!str)
+                str = "";
             static constexpr size_t ASCII_STRLEN = sizeof(ascii) - 1;
             IDK_ASSERT(idk_strlen(str) <= ASCII_STRLEN, "Ascii ID exceeds maximum allowed length");
             idk_strncpy(ascii, str, ASCII_STRLEN);

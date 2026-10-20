@@ -1,322 +1,184 @@
-#include <SDL3_net/SDL_net.h>
-
 #include "libidk/message/RemoteRxTx.hpp"
-#include "libidk/dsa/Serialize.hpp"
+#include "libidk/message/Wire.hpp"
+#include <SDL3_net/SDL_net.h>
+#include <cstdio>
 
-#include "libidk/StdMem.hpp"
-#include "libidk/StdStr.hpp"
-#include "libidk/math.hpp"
-#include "libidk/log.hpp"
+void idk::RemoteEndpoint::assign(NET_Address *address, uint16_t port)
+{
+    if (address)
+        NET_RefAddress(address);
+    reset();
+    mAddress = address;
+    mPort = port;
+}
 
-
-
-// idk::RemoteRxer::RemoteRxer(uint16_t port)
-// :   mAuthToken(0xDEADBEBE),
-//     mSocket(nullptr),
-//     mPort(port),
-//     mLastSender(nullptr),
-//     mHeader(mMessageBuf.header),
-//     mPayload(mMessageBuf.payload)
-// {
-//     if (!NET_Init())
-//     {
-//         VLOG_FATAL("[RemoteRxer::RemoteRxer] Failure initializing SDL3_Net: {}", SDL_GetError());
-//     }
-
-//     if (!(mSocket = NET_CreateDatagramSocket(NULL, mPort, 0)))
-//     {
-//         VLOG_FATAL("[RemoteRxer::RemoteRxer] Failure creating socket: {}", SDL_GetError());
-//     }
-// }
-
-
-// bool idk::RemoteRxer::recvMsg(void *dstBuf, size_t dstSize)
-// {
-//     NET_Datagram *d = beginRecvMsg();
-//     if (d == nullptr) { return false; }
-
-//     ByteDecoder decoder(d->buf, d->buflen);
-//     decoder.read(&mHeader, sizeof(mHeader));
-//     if (mHeader.authToken != mAuthToken)
-//     {
-//         VLOG_WARN("[RemoteRxer::recvMsg] header.authToken != mAuthToken");
-//         return badRecvMsg(d);
-//     }
-//     if (mHeader.payloadSize > dstSize)
-//     {
-//         VLOG_WARN("[RemoteRxer::recvMsg] payloadSize is larger than dstSize");
-//         return badRecvMsg(d);
-//     }
-//     decoder.read(dstBuf, dstSize);
-
-//     if (mLastSender)
-//     {
-//         NET_UnrefAddress(mLastSender);
-//     }
-//     mLastSender = NET_RefAddress(d->addr);
-
-//     return goodRecvMsg(d);
-// }
-
-// bool idk::RemoteRxer::replyMsg(uint16_t port, void *srcBuf, size_t srcSize)
-// {
-//     if (!mLastSender)
-//     {
-//         VLOG_WARN("[RemoteRxer::replyMsg] Failed to reply message: no previous sender");
-//         return false;
-//     }
-
-//     ByteEncoder encoder(&mMessageBuf, sizeof(mMessageBuf));
-//     encoder.write(RemoteMessageHeader{mAuthToken, 0, uint16_t(srcSize)});
-//     if (!encoder.write(srcBuf, srcSize))
-//     {
-//         VLOG_WARN("[RemoteRxer::replyMsg] Failed to send message: srcSize too large");
-//         return false;
-//     }
-//     if (!NET_SendDatagram(mSocket, mLastSender, port, encoder.getBase(), encoder.getSize()))
-//     {
-//         VLOG_WARN("[RemoteRxer::replyMsg] Failed to send datagram: {}", SDL_GetError());
-//         return false;
-//     }
-//     return true;
-// }
-
-// NET_Datagram *idk::RemoteRxer::beginRecvMsg()
-// {
-//     NET_Datagram *d = nullptr;
-//     if (NET_ReceiveDatagram(mSocket, &d) && d)
-//     {
-//         if (d->buflen > 1500)
-//         {
-//             VLOG_WARN("[RemoteRxer::beginRecvMsg] datagram exceeds maximum allowed size");
-//             NET_DestroyDatagram(d);
-//             return nullptr;
-//         }
-//         return d;
-//     }
-//     return nullptr;
-// }
-
-// bool idk::RemoteRxer::goodRecvMsg(NET_Datagram *d)
-// {
-//     NET_DestroyDatagram(d);
-//     return true;
-// }
-
-// bool idk::RemoteRxer::badRecvMsg(NET_Datagram *d)
-// {
-//     NET_DestroyDatagram(d);
-//     return false;
-// }
-
-
-
-
-
-// idk::RemoteTxer::RemoteTxer(const char *hostname, uint16_t dstport)
-// :   mAuthToken(0xDEADBEBE),
-//     mDstPort(dstport),
-//     mHeader(mMessageBuf.header),
-//     mPayload(mMessageBuf.payload)
-// {
-//     if (!NET_Init())
-//     {
-//         VLOG_FATAL("[RemoteTxer::RemoteTxer] Failure initializing SDL3_Net: {}", SDL_GetError());
-//     }
-
-//     mRemoteAddr = NET_ResolveHostname(hostname);
-//     if (!mRemoteAddr)
-//     {
-//         VLOG_FATAL("[RemoteTxer::RemoteTxer] Failure resolving host: {}", SDL_GetError());
-//     }
-//     NET_WaitUntilResolved(mRemoteAddr, 10000);
-
-//     if (!(mSocket = NET_CreateDatagramSocket(NULL, 0, 0)))
-//     {
-//         VLOG_FATAL("[RemoteTxer::RemoteTxer] Failure creating socket: {}", SDL_GetError());
-//     }
-// }
-
-
-// idk::RemoteTxer::~RemoteTxer()
-// {
-//     NET_UnrefAddress(mRemoteAddr);
-//     NET_DestroyDatagramSocket(mSocket);
-// }
-
-
-// bool idk::RemoteTxer::sendMsg(const void *srcBuf, size_t srcSize)
-// {
-//     ByteEncoder encoder(&mMessageBuf, sizeof(mMessageBuf));
-//     encoder.write(RemoteMessageHeader{mAuthToken, 0, uint16_t(srcSize)});
-//     if (!encoder.write(&srcBuf, srcSize))
-//     {
-//         VLOG_WARN("[RemoteTxer::sendMsg] Failed to send message: srcSize too large");
-//         return false;
-//     }
-//     if (!NET_SendDatagram(mSocket, mRemoteAddr, mDstPort, encoder.getBase(), encoder.getSize()))
-//     {
-//         VLOG_WARN("[RemoteTxer::sendmsg] Failed to send datagram: {}", SDL_GetError());
-//         return false;
-//     }
-//     return true;
-// }
-
-
-
-
-
-
+idk::RemoteEndpoint::RemoteEndpoint(const RemoteEndpoint &other) { assign(other.mAddress, other.mPort); }
+idk::RemoteEndpoint &idk::RemoteEndpoint::operator=(const RemoteEndpoint &other)
+{
+    assign(other.mAddress, other.mPort);
+    return *this;
+}
+idk::RemoteEndpoint::~RemoteEndpoint() { reset(); }
+void idk::RemoteEndpoint::reset()
+{
+    if (mAddress)
+        NET_UnrefAddress(mAddress);
+    mAddress = nullptr;
+    mPort = 0;
+}
+bool idk::RemoteEndpoint::operator==(const RemoteEndpoint &other) const
+{
+    return mPort == other.mPort &&
+           (mAddress == other.mAddress || (mAddress && other.mAddress && !NET_CompareAddresses(mAddress, other.mAddress)));
+}
 
 idk::RemoteRxTxer::RemoteRxTxer(const char *hostname, uint16_t port)
-:   mAuthToken(0xDEADBEBE),
-    mSocket(nullptr),
-    mRemoteAddr(nullptr),
-    mPort(port),
-    mHeader(mMsgBuf.header),
-    mPayload(mMsgBuf.payload)
 {
-    if (!NET_Init())
-    {
-        VLOG_FATAL("[RemoteRxTxer::RemoteRxTxer] Failure initializing SDL3_Net: {}", SDL_GetError());
-    }
-
-    if (hostname)
-    {
-        mRemoteAddr = NET_ResolveHostname(hostname);
-        if (!mRemoteAddr)
-        {
-            VLOG_FATAL("[RemoteRxTxer::RemoteRxTxer] Failure resolving host: {}", SDL_GetError());
-        }
-        NET_WaitUntilResolved(mRemoteAddr, 10000);
-    }
-
-    if (!(mSocket = NET_CreateDatagramSocket(NULL, port, 0)))
-    {
-        VLOG_FATAL("[RemoteTxer::RemoteRxTxer] Failure creating socket: {}", SDL_GetError());
-    }
+    open(hostname, hostname ? port : 0, hostname ? 0 : port);
 }
+idk::RemoteRxTxer::~RemoteRxTxer() { close(); }
+void idk::RemoteRxTxer::recordError() { std::snprintf(mError, sizeof(mError), "%s", SDL_GetError()); }
 
-
-idk::RemoteRxTxer::~RemoteRxTxer()
+bool idk::RemoteRxTxer::open(const char *hostname, uint16_t remotePort, uint16_t localPort, const char *bindHost)
 {
-    if (mRemoteAddr) { NET_UnrefAddress(mRemoteAddr); }
-    if (mSocket)     { NET_DestroyDatagramSocket(mSocket); }
-}
-
-
-
-idk::MessageRecvInfo *idk::RemoteRxTxer::recvMsg()
-{
-    NET_Datagram *dgram = beginRecvMsg();
-    if (dgram == nullptr) { return nullptr; }
-
-    ByteDecoder decoder(dgram->buf, dgram->buflen);
-    decoder.read(mHeader);
-    if (mHeader.authToken != mAuthToken)
+    close();
+    mError[0] = '\0';
+    if (hostname && !remotePort)
     {
-        VLOG_WARN("[RemoteRxTxer::recvMsg] header.authToken != mAuthToken");
-        return badRecvMsg(dgram);
-    }
-    if (mHeader.payloadSize > RemoteRxTx::MAX_PAYLOAD_SIZE)
-    {
-        VLOG_WARN("[RemoteRxTxer::recvMsg] Payload too large: {} / {}", mHeader.payloadSize, RemoteRxTx::MAX_PAYLOAD_SIZE);
-        return badRecvMsg(dgram);
-    }
-    decoder.read(mPayload.data, mHeader.payloadSize);
-
-    if (mRemoteAddr)
-    {
-        NET_UnrefAddress(mRemoteAddr);
-    }
-    mRemoteAddr = NET_RefAddress(dgram->addr);
-
-    return goodRecvMsg(dgram);
-}
-
-
-
-
-bool idk::RemoteRxTxer::sendMsg(const void *srcBuf, size_t srcSize, MessagePayloadType payloadType)
-{
-    if (srcSize > sizeof(mPayload))
-    {
-        VLOG_WARN("[RemoteRxTxer::sendMsg] Failure sending message: srcSize too large");
+        std::snprintf(mError, sizeof(mError), "Remote port must be nonzero");
         return false;
     }
-
-    if (!mRemoteAddr)
+    if (!(mInitialized = NET_Init()))
     {
+        recordError();
         return false;
     }
-
-    ByteEncoder encoder(&mMsgBuf, sizeof(mMsgBuf));
-    encoder.write(MessageHeader(mAuthToken, srcSize, payloadType));
-    encoder.write(srcBuf, srcSize);
-
-    if (!NET_SendDatagram(mSocket, mRemoteAddr, mPort, &mMsgBuf, mHeader.messageSize))
+    NET_Address *destination = hostname ? NET_ResolveHostname(hostname) : nullptr;
+    if (hostname && (!destination || NET_WaitUntilResolved(destination, 1000) != NET_SUCCESS))
     {
-        VLOG_WARN("[RemoteRxTxer::sendmsg] Failure sending datagram: {}", SDL_GetError());
+        recordError();
+        if (destination)
+            NET_UnrefAddress(destination);
+        close();
         return false;
     }
-
+    mRemote.assign(destination, remotePort);
+    if (destination)
+        NET_UnrefAddress(destination);
+    NET_Address *binding = bindHost ? NET_ResolveHostname(bindHost) : nullptr;
+    if (bindHost && (!binding || NET_WaitUntilResolved(binding, 1000) != NET_SUCCESS))
+    {
+        recordError();
+        if (binding)
+            NET_UnrefAddress(binding);
+        close();
+        return false;
+    }
+    SDL_PropertiesID properties = SDL_CreateProperties();
+    if (properties)
+    {
+        SDL_SetBooleanProperty(properties, NET_PROP_DATAGRAM_SOCKET_REUSEADDR_BOOLEAN, false);
+        mSocket = NET_CreateDatagramSocket(binding, localPort, properties);
+        SDL_DestroyProperties(properties);
+    }
+    if (binding)
+        NET_UnrefAddress(binding);
+    if (!mSocket)
+    {
+        recordError();
+        close();
+        return false;
+    }
     return true;
 }
 
-
-// bool idk::RemoteRxTxer::replyMsg(void *srcBuf, size_t srcSize)
-// {
-//     if (!mLastSender)
-//     {
-//         VLOG_WARN("[RemoteRxTxer::replyMsg] Failed to reply message: no previous sender");
-//         return false;
-//     }
-
-//     mHeader = {mAuthToken, 0, uint16_t(srcSize)};
-//     if (srcSize > sizeof(mPayload))
-//     {
-//         VLOG_WARN("[RemoteRxTxer::sendMsg] Failed to send message: srcSize too large");
-//         return false;
-//     }
-//     idk_memcpy(&mPayload, srcBuf, srcSize);
-
-//     if (!NET_SendDatagram(mSocket, mLastSender, mPort, &mMessageBuf, sizeof(mHeader) + srcSize))
-//     {
-//         VLOG_WARN("[RemoteRxTxer::replyMsg] Failed to send datagram: {}", SDL_GetError());
-//         return false;
-//     }
-//     return true;
-// }
-
-
-NET_Datagram *idk::RemoteRxTxer::beginRecvMsg()
+void idk::RemoteRxTxer::close()
 {
-    NET_Datagram *d = nullptr;
-    if (NET_ReceiveDatagram(mSocket, &d) && d)
+    mRemote.reset();
+    mSender.reset();
+    mRecvInfo = {};
+    if (mSocket)
+        NET_DestroyDatagramSocket(mSocket);
+    mSocket = nullptr;
+    if (mInitialized)
+        NET_Quit();
+    mInitialized = false;
+}
+
+idk::RemoteReceive idk::RemoteRxTxer::receive(MessageRecvInfo *&message)
+{
+    message = nullptr;
+    mSender.reset();
+    if (!mSocket)
+        return RemoteReceive::Error;
+    NET_Datagram *packet = nullptr;
+    if (!NET_ReceiveDatagram(mSocket, &packet))
     {
-        if (d->buflen > 1500)
-        {
-            VLOG_WARN("[RemoteRxTxer::beginRecvMsg] datagram exceeds maximum allowed size");
-            NET_DestroyDatagram(d);
-            return nullptr;
-        }
-        return d;
+        recordError();
+        close();
+        return RemoteReceive::Error;
     }
-    return nullptr;
+    if (!packet)
+        return RemoteReceive::Empty;
+    bool valid = packet->buflen >= int(RemoteRxTx::HEADER_SIZE) &&
+                 packet->buflen <= int(RemoteRxTx::HEADER_SIZE + RemoteRxTx::MAX_PAYLOAD_SIZE);
+    MessageHeader header;
+    if (valid)
+    {
+        WireReader reader(packet->buf, size_t(packet->buflen));
+        header.authToken = reader.u64();
+        header.messageSize = reader.u64();
+        header.payloadSize = reader.u64();
+        reader.bytes(header.payloadType.ascii, sizeof(header.payloadType.ascii));
+        valid = reader.good() && header.authToken == RemoteRxTx::WIRE_VERSION &&
+                header.messageSize == uint64_t(packet->buflen) &&
+                header.payloadSize == uint64_t(packet->buflen) - RemoteRxTx::HEADER_SIZE;
+        if (valid)
+        {
+            reader.bytes(mPayload, size_t(header.payloadSize));
+            mSender.assign(packet->addr, packet->port);
+            mRecvInfo.header = header;
+            mRecvInfo.payload = mPayload;
+            message = &mRecvInfo;
+        }
+    }
+    NET_DestroyDatagram(packet);
+    return valid ? RemoteReceive::Message : RemoteReceive::Invalid;
 }
 
-idk::MessageRecvInfo *idk::RemoteRxTxer::goodRecvMsg(NET_Datagram *d)
+idk::MessageRecvInfo *idk::RemoteRxTxer::recvMsg()
 {
-    NET_DestroyDatagram(d);
-    mRecvInfo.header = mHeader;
-    mRecvInfo.payload = &mPayload;
-    return &mRecvInfo;
+    MessageRecvInfo *message = nullptr;
+    receive(message);
+    return message;
 }
 
-idk::MessageRecvInfo *idk::RemoteRxTxer::badRecvMsg(NET_Datagram *d)
+bool idk::RemoteRxTxer::sendMsg(const void *data, size_t size, MessagePayloadType type)
 {
-    NET_DestroyDatagram(d);
-    return nullptr;
+    return sendTo(mRemote.valid() ? mRemote : mSender, data, size, type);
 }
 
+bool idk::RemoteRxTxer::sendTo(const RemoteEndpoint &endpoint, const void *data, size_t size, MessagePayloadType type)
+{
+    if (!mSocket || !endpoint.valid() || size > RemoteRxTx::MAX_PAYLOAD_SIZE || (size && !data))
+        return false;
+    uint8_t buffer[RemoteRxTx::HEADER_SIZE + RemoteRxTx::MAX_PAYLOAD_SIZE];
+    WireWriter writer(buffer, sizeof(buffer));
+    writer.u64(RemoteRxTx::WIRE_VERSION);
+    writer.u64(RemoteRxTx::HEADER_SIZE + size);
+    writer.u64(size);
+    writer.bytes(type.ascii, sizeof(type.ascii));
+    writer.bytes(data, size);
+    if (!NET_SendDatagram(mSocket, endpoint.mAddress, endpoint.mPort, buffer, int(writer.size())))
+    {
+        recordError();
+        return false;
+    }
+    return true;
+}
 
+void idk::RemoteRxTxer::simulatePacketLoss(int percent)
+{
+    if (mSocket)
+        NET_SimulateDatagramPacketLoss(mSocket, percent < 0 ? 0 : (percent > 100 ? 100 : percent));
+}

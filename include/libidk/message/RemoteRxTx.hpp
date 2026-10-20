@@ -4,101 +4,71 @@
 
 struct NET_DatagramSocket;
 struct NET_Address;
-struct NET_Datagram;
 
 namespace idk
 {
     namespace RemoteRxTx
     {
-        static constexpr size_t MAX_PAYLOAD_SIZE = 1024;
-
-        struct PayloadBuffer
-        {
-            uint8_t data[RemoteRxTx::MAX_PAYLOAD_SIZE];
-        };
-
-        struct MessageBuffer
-        {
-            MessageHeader header;
-            PayloadBuffer payload;
-        };
+        inline constexpr size_t MAX_PAYLOAD_SIZE = 1024;
+        inline constexpr size_t HEADER_SIZE = 32;
+        // Protocol marker and version, not an authentication credential.
+        inline constexpr uint64_t WIRE_VERSION = 0x49444b4d00000001ULL;
     }
 
-
-    // class RemoteRxer: public idk::MessageRxer
-    // {
-    // public:
-    //     using MessageRxer::recvMsg;
-
-    //     RemoteRxer(uint16_t port);
-    //     virtual bool recvMsg(void *data, size_t size) override;
-    //     bool replyMsg(uint16_t port, void *data, size_t size);
-
-    // private:
-    //     const uint32_t        mAuthToken;
-    //     NET_DatagramSocket   *mSocket;
-    //     uint16_t              mPort;
-    //     NET_Address          *mLastSender;
-    //     RemoteMessageData     mMessageBuf;
-    //     RemoteMessageHeader  &mHeader;
-    //     RemoteMessagePayload &mPayload;
-
-    //     NET_Datagram *beginRecvMsg();
-    //     bool goodRecvMsg(NET_Datagram*);
-    //     bool badRecvMsg(NET_Datagram*);
-    // };
-
-
-    // class RemoteTxer: public idk::MessageTxer
-    // {
-    // public:
-    //     using MessageTxer::sendMsg;
-
-    //     RemoteTxer(const char *hostname, uint16_t dstport);
-    //     ~RemoteTxer();
-    //     virtual bool sendMsg(const void *data, size_t size) override;
-
-    // private:
-    //     const uint32_t        mAuthToken;
-    //     NET_DatagramSocket   *mSocket;
-    //     NET_Address          *mRemoteAddr;
-    //     uint16_t              mDstPort;
-    //     RemoteMessageData     mMessageBuf;
-    //     RemoteMessageHeader  &mHeader;
-    //     RemoteMessagePayload &mPayload;
-    // };
-
-
-
-    class RemoteRxTxer: public idk::MessageRxer, public idk::MessageTxer
+    // Owns a reference to an SDL_net address. Copies retain it.
+    class RemoteEndpoint
     {
     public:
-        using MessageRxer::recvMsg;
-        using MessageTxer::sendMsg;
-
-        RemoteRxTxer(const char *hostname, uint16_t dstport);
-        ~RemoteRxTxer();
-    
-        virtual MessageRecvInfo *recvMsg() override;
-        virtual bool sendMsg(const void *src, size_t size, MessagePayloadType type={0}) override;
-
+        RemoteEndpoint() = default;
+        RemoteEndpoint(const RemoteEndpoint &);
+        RemoteEndpoint &operator=(const RemoteEndpoint &);
+        ~RemoteEndpoint();
+        bool valid() const { return mAddress && mPort; }
+        bool operator==(const RemoteEndpoint &) const;
+        uint16_t port() const { return mPort; }
+        void reset();
 
     private:
-        using PayloadBufType = RemoteRxTx::PayloadBuffer;
-        using MessageBufType = RemoteRxTx::MessageBuffer;
-
-        const uint32_t        mAuthToken;
-        NET_DatagramSocket   *mSocket;
-        NET_Address          *mRemoteAddr;
-        uint16_t              mPort;
-        MessageHeader        &mHeader;
-        PayloadBufType       &mPayload;
-        MessageBufType        mMsgBuf;
-        MessageRecvInfo       mRecvInfo;
-
-        NET_Datagram *beginRecvMsg();
-        MessageRecvInfo *goodRecvMsg(NET_Datagram*);
-        MessageRecvInfo *badRecvMsg(NET_Datagram*);
+        friend class RemoteRxTxer;
+        NET_Address *mAddress = nullptr;
+        uint16_t mPort = 0;
+        void assign(NET_Address *, uint16_t);
     };
 
+    enum class RemoteReceive { Empty, Message, Invalid, Error };
+
+    class RemoteRxTxer: public MessageRxer, public MessageTxer, public Immobile
+    {
+    public:
+        RemoteRxTxer() = default;
+        // Null hostname listens on port; a client binds an ephemeral local port.
+        RemoteRxTxer(const char *hostname, uint16_t port);
+        ~RemoteRxTxer() override;
+
+        // Resolution may wait up to 1 second per address; polling never blocks.
+        bool open(const char *hostname, uint16_t remotePort, uint16_t localPort = 0,
+                  const char *bindHost = nullptr);
+        void close();
+        bool isOpen() const { return mSocket != nullptr; }
+        const char *error() const { return mError; }
+        const RemoteEndpoint &remote() const { return mRemote; }
+        const RemoteEndpoint &sender() const { return mSender; }
+
+        // Data and sender remain valid until the next receive or close. Sending
+        // uses a separate buffer and never changes the configured destination.
+        RemoteReceive receive(MessageRecvInfo *&);
+        MessageRecvInfo *recvMsg() override;
+        bool sendMsg(const void *, size_t, MessagePayloadType type = "") override;
+        bool sendTo(const RemoteEndpoint &, const void *, size_t, MessagePayloadType type = "");
+        void simulatePacketLoss(int percent);
+
+    private:
+        NET_DatagramSocket *mSocket = nullptr;
+        bool mInitialized = false;
+        RemoteEndpoint mRemote, mSender;
+        uint8_t mPayload[RemoteRxTx::MAX_PAYLOAD_SIZE]{};
+        MessageRecvInfo mRecvInfo{};
+        char mError[256]{};
+        void recordError();
+    };
 }
